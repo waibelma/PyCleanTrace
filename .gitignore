@@ -1,0 +1,12 @@
+databases/
+*.pyc
+scripts/packages/.env
+Dask/test/
+.env
+scripts/general/.env
+.idea
+.ipynb_checkpoints
+.vscode
+dask-worker-space/
+*.txt
+*.pkl
