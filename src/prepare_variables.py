@@ -23,7 +23,7 @@ def create_necessary_vars(df_in):
     
     """
     print("")
-    print('STEP 7.1: Additional variable creation: finalized')
+    print('STEP 6.1: Additional variable creation: finalized')
     df_add_vars = df_in.copy()
 
     # Build the trade size in USD
@@ -43,7 +43,7 @@ def create_necessary_vars(df_in):
     # Delete the raw variables necessary to the agency indicator classification
     df_add_vars = df_add_vars[df_add_vars.columns.drop(['buy_cpcty_cd', 'sell_cpcty_cd'])]
 
-    print('Additional variable creation: finalized')
+    print('STEP 6.1: Additional variable creation: finalized')
 
     return df_add_vars
 

@@ -98,9 +98,9 @@ def def_unique_bond_info(path):
         # Loop over all sample days in the respective year
         for day in range(0, len(daily_files_basic)):
             if year >= 10:
-                print('Currently reading Year: 20{}, Trading Day: {}'.format(year, day))
+                print('Currently reading Year: 20{}, Trading Day: {}'.format(year+2, day))
             else:
-                print('Currently reading Year: 200{}, Trading Day: {}'.format(year, day))
+                print('Currently reading Year: 200{}, Trading Day: {}'.format(year+2, day))
             # Note that there were no supplementary files prior to the reform in 2012-02-06. Thus, this needs
             # to be treated separately
             if (datetime.strptime('{}'.format(daily_files_basic[day][-14:-4]), '%Y-%m-%d') <=
@@ -155,7 +155,6 @@ def def_unique_bond_info(path):
                 )
     # Store the dataset
     bond_info_df.to_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/bond_info.pkl')
-    print("Done constructing the dataset containing all CUSIPs in the sample")
 
     return bond_info_df
 

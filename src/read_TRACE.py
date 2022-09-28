@@ -475,9 +475,9 @@ def read_pre_2012(year_ind, annual_fld, path, unmatched_in):
     # Loop over all days in one yearly folder and concatenate the dataset
     for day in range(0, len(daily_files)):
         if year_ind >= 10:
-            print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
+            print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind +1, day))
         else:
-            print('Currently reading Year: 200{}, Trading Day: {}'.format(year_ind, day))
+            print('Currently reading Year: 200{}, Trading Day: {}'.format(year_ind +1, day))
         if (day == 0):
             # Read in the new daily dataset.
             df = adj_dt_format_pre_2012(ann_fld_path + '/' + daily_files[day])
@@ -626,8 +626,7 @@ def read_TRACE_all_PARALLEL_2(path, N_workers):
     Parallel(n_jobs=N_workers)(delayed(read_TRACE_all_PARALLEL_prior_2012)(path, annual_fld_names, unmatched, year) for year in range(10, 0, -1))
     print("The reading-in for the years 2011 - 2002 is finalized")
 
-
-    print("SUCCESS: The reading-in and concatenation to individual year files (including the Dick-Nielsen and Poulsen (2019) correction is finalised")
+    print("SUCCESS! The reading-in and concatenation to individual year files (including the Dick-Nielsen and Poulsen (2019) correction is finalised")
 
 
 
