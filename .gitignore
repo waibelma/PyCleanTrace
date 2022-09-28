@@ -1,4 +1,4 @@
-databases/
+../bld/data
 *.pyc
 scripts/packages/.env
 Dask/test/
