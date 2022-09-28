@@ -48,7 +48,7 @@ from prepare_variables import map_risk_weight_reg_period
 ## 0.3) Set up file paths to check it read-in steps can be skipped or not
 ######
 # Project root path
-project_path = 'C:/Users/Martin/Dropbox/Projects/Martin/QE_constraints/code_output/src/code/data_management/github/clean_TRACE_DATA/'
+project_path = 'C:/Users/Martin/Desktop/upload_trace_new/Clean-Academic-TRACE-data/'
 
 
 # Model specifications
@@ -107,9 +107,9 @@ if ((os.path.isfile(path_TRACE_raw_clean_first)) & (os.path.isfile(path_TRACE_ra
     print("STEP 1.1: Raw Trace data is already read, cleaned and saved. Directly proceed with next step")
 elif not os.path.isfile(path_TRACE_raw_clean_first):
     print("")
-    print("Start reading and and concatenating the raw TRACE data")
+    print("STEP 1.1: Start reading and and concatenating the raw TRACE data")
     read_TRACE_all(project_path)
-    print("Finished reading and and concatenating the raw TRACE data")
+    print("STEP 1.1: Finished reading and and concatenating the raw TRACE data")
     #read_TRACE_all_PARALLEL_2(project_path, -1)
 
 # 1.2) Read in the daily bond background characteristics
@@ -118,9 +118,9 @@ if (os.path.isfile(path_TRACE_bond_info)):
     print("STEP 1.2: Reading in of the bond background characteristics has aslready been executed")
 elif not os.path.isfile(path_TRACE_bond_info):
     print("")
-    print("Start constructing the dataset containing the bond background characteristics")
+    print("STEP 1.2: Start constructing the dataset containing the bond background characteristics")
     def_unique_bond_info(project_path)
-    print("Finished constructing the dataset containing the bond background characteristics")
+    print("STEP 1.2: Finished constructing the dataset containing the bond background characteristics")
 
 # 1.3) Read in the list of all reported dates in TRACE
 if (os.path.isfile(df_all_rpt_dates)):
@@ -128,9 +128,9 @@ if (os.path.isfile(df_all_rpt_dates)):
     print("STEP 1.3: Reading in of the dataset containing the union of all reporting dates has aslready been executed")
 elif not os.path.isfile(df_all_rpt_dates):
     print("")
-    print('Start constructing the dataset containing the union of all reporting dates has started')
+    print('STEP 1.3: Start constructing the dataset containing the union of all reporting dates has started')
     get_all_rpt_dates(project_path)
-    print('Finished constructing the dataset containing the union of all reporting dates')
+    print('STEP 1.3: Finished constructing the dataset containing the union of all reporting dates')
 
 ######
 # 2) Implement the remaining cleaning steps:
@@ -194,13 +194,13 @@ del [df_merged_cleaned_4]
 # 4) Save the final concatenated and cleaned dataset in pickle format
 ######
 print("")
-print('Saving the DataFrame has started')
+print('STEP 8: Saving the DataFrame has started')
 df_merged_cleaned_5_1.to_pickle(project_path + 'bld/data/TRACE/TRACE_final_clean/TRACE_final.pkl')
 
 
 # Stop the time
 t1 = time.time()
 print("")
-print("FINISHED TO READ AND CLEAN THE ACADEMIC TRACE DATA FOR THE TIME RANGE: {} to {}".format(dataset_specs['sample_time_span'][0], dataset_specs['sample_time_span'][0]))
+print("FINISHED TO READ AND CLEAN THE ACADEMIC TRACE DATA FOR THE TIME RANGE: {} to {}".format(dataset_specs['sample_time_span'][0], dataset_specs['sample_time_span'][1]))
 print("")
-print("The total execution time was {} hours".format(np.round((t1-t0)/3600), 2))
+print("The total execution time was {} hours".format(np.round((t1-t0)/3600), 3)

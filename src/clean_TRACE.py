@@ -328,7 +328,7 @@ def del_interd_transact(df_in_concat):
     #temp_raw7 = temp_raw7.drop(columns=['id', 'select_d'])
 
     # Print final statement
-    print('The interdealer trade cancellation is completed')
+    print('STEP 3.1: The interdealer trade cancellation is completed')
 
     return list_trnsct_keep
 
@@ -399,7 +399,7 @@ def clean_trade_level(df_in):
         format(N_trnsct - len(df_clean)))
 
     # Print finalization statement
-    print('The trade-level cleaning is done')
+    print('STEP 3.2:The trade-level cleaning is done')
 
     return df_clean
 
@@ -506,7 +506,7 @@ def clean_trd_days(df_in, project_path):
     df_clean_dates (DataFrame): DataFrame additionally cleaned by the respective transaction dates
     """
     print("")
-    print('STEP 6.1: Cleaning of the transaction dates: started')
+    print('STEP 5.1: Cleaning of the transaction dates: started')
 
     df_clean_dates = df_in.copy()
 
@@ -529,7 +529,7 @@ def clean_trd_days(df_in, project_path):
     # Exclude the christmas days
     df_clean_dates = df_clean_dates[((df_clean_dates.month == 12) & (df_clean_dates.day.isin([24, 25]))) == False]
 
-    print('Cleaning of the transaction dates: finalized')
+    print('STEP 5.1: Cleaning of the transaction dates: finalized')
 
     return df_clean_dates
 
