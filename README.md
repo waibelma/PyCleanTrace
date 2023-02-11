@@ -1,4 +1,4 @@
-Python Code to Clean Academic TRACE data following the procedure outlined in Dick-Nielsen & Poulsen (2019)
+Python Code to Clean Academic TRACE data following the procedure outlined in [Dick-Nielsen & Poulsen (2019)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3456082)
 -------------
 **Clean_Academic_TRACE** is an integrated Python code that facilitates the i) reading of the raw data from the text files, ii) the concatenation of the individual TRACE datasets, iii) the implementation of the cleaning and correction steps as on Dick-Nielsen & Poulsen (2019), and iv) The generation of relevant variables and the implementation of additional cleaning steps. 
 
