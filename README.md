@@ -21,7 +21,8 @@ Instructions for  running **Clean_Academic_TRACE**:
 6) Navigate in the terminal into the **src** folder and initiate the data generation process via **python build_TRACE.py**
 
 
-   6.1) asd
+   6.1) The code loops through the available years backwards in time (starting with the largest year) and reads the raw data, performs the cleaning steps
+        and concatenates the yearly datasets to one final cleaned and concatenated TRACE dataset.
 
 
 Description
