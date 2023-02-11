@@ -7,7 +7,7 @@ The original cleaning code by Dick-Nielsen & Poulsen (2019) is written in SAS. *
 Setup
 -------------
 
-Instructions for  running **ML_toolbox**:
+Instructions for  running **Clean_Academic_TRACE**:
 
 1) Install git on your computer. [git download instructions](https://www.atlassian.com/git/tutorials/install-git)
 
