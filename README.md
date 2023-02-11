@@ -12,9 +12,9 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 2) Clone the repository to a local folder of your choice by using [this](https://github.com/waibelma/Clean-Academic-TRACE-data.git) link
 
-3) Specify  the desired time range of the feature dataset and the desired storage format (pickle, etc.) in the script **toolbox_specs.py** 
+3) Place the raw TRACE data (in annual -zip folders) in the folder  src/original_data/academic_TRACE/TRACE_raw
 
-4) Navigate in the console to the folder **../asset_pricing** and insert _python toolbox_specs.py_ in the command line
+4) Place the Mergent FISD data in the folder src/original_data/Mergent_FISD. There has to be one dataset for bond issue information and one dataset for the rating information. For the structure of the dataset please refer to the sample datasets **issue_data_sample.pkl** and **ratings_sample.pkl**
 
 5) (First run only): Insert your WRDS credentials in the **.env** file in the folder  **scripts/general** . (Note that this is a hidden file and will be automatically created upon the first run -> It is located in **features/monthly/scripts/general/**)
 
