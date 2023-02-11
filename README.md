@@ -4,14 +4,13 @@ Python Code to Clean Academic TRACE data following the procedure outlined in [Di
 
 The original cleaning code by Dick-Nielsen & Poulsen (2019) is written in SAS. **Clean_Academic_TRACE** is meant to provide an open-source alternative to facilitate the data management when working with Academic TRACE in Python.
 
-Setup
 -------------
 
 Instructions for  running **Clean_Academic_TRACE**:
 
 1) Install git on your computer. [git download instructions](https://www.atlassian.com/git/tutorials/install-git)
 
-2) Clone the repository to a local folder of your choice by using [this](https://github.com/AAs-sudo/asset_pricing.git) link
+2) Clone the repository to a local folder of your choice by using [this](https://github.com/waibelma/Clean-Academic-TRACE-data.git) link
 
 3) Specify  the desired time range of the feature dataset and the desired storage format (pickle, etc.) in the script **toolbox_specs.py** 
 
