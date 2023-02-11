@@ -16,11 +16,10 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 4) Place the Mergent FISD data in the folder src/original_data/Mergent_FISD. There has to be one dataset for bond issue information and one dataset for the rating information. For the structure of the dataset please refer to the sample datasets **issue_data_sample.pkl** and **ratings_sample.pkl**
 
-5) (First run only): Insert your WRDS credentials in the **.env** file in the folder  **scripts/general** . (Note that this is a hidden file and will be automatically created upon the first run -> It is located in **features/monthly/scripts/general/**)
+5) Change the **project_path** in the file **build_TRACE.py** into your corresponding path
 
-6) After inserting the WRDS credentials, the above steps will start the download process of Computstat and CRSP from WRDS, perform the cleaning steps, create the features and store both the raw data, the intermediate data and the final dataset in the folder *databases*
-
-7) Note: In the baseline specification the machine learning part is commented out to allow for a more approachable start. To activate the Machine Learning part the respective lines in **toolbox_specs.py** have to be activated. It is recommended to use the monthly feature version as of now.
+6) Navigate in the terminal into the **src** folder and initiate the data generation process via **python build_TRACE.py**
+   6.1) 
 
 
 Description
