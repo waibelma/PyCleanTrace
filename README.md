@@ -19,7 +19,9 @@ Instructions for  running **Clean_Academic_TRACE**:
 5) Change the **project_path** in the file **build_TRACE.py** into your corresponding path
 
 6) Navigate in the terminal into the **src** folder and initiate the data generation process via **python build_TRACE.py**
-   6.1) 
+
+
+   6.1) asd
 
 
 Description
