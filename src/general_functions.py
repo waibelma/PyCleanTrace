@@ -14,9 +14,7 @@ def build_folders(path_in):
     Generates the relevant file path
     """
 
-    print("Hi")
     if not os.path.exists(path_in):
-        print("Hi")
         if ((platform=="win32") | (platform=="win64")):
             os.mkdir(path_in)
             #os.system("chmod 777 " + path_in)
@@ -61,6 +59,8 @@ def construct_nec_folders(project_path):
   
     # Checking if the list is empty or not
     if len(dir) == 0:
-        print("This folder is empty. Please insert the raw TRACE data as specified in the README.")
+        print("")
+        raise ValueError('This folder is empty. Please insert the raw TRACE data as specified in the README.')
+        print("")
     else:
         pass
