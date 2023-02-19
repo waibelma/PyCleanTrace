@@ -44,12 +44,23 @@ def construct_nec_folders(project_path):
     path_input_raw_data_2 = project_path + 'src/original_data/academic_TRACE/TRACE_raw'
     path_input_raw_data_3 = project_path + 'src/original_data/Mergent_FISD'
 
-    path_output_clean_data_1 = project_path + 'bld/data/TRACE/'
-    path_output_clean_data_2 = project_path + 'bld/data/TRACE/TRACE_raw_clean'
+    path_output_clean_data_1 = project_path + 'bld/data'
+    path_output_clean_data_2 = project_path + 'bld/data/TRACE/'
+    path_output_clean_data_3 = project_path + 'bld/data/TRACE/TRACE_raw_clean'
 
     # Construct the relevant folders if they are not already exisiting
     build_folders(path_input_raw_data_1)
     build_folders(path_input_raw_data_2)
     build_folders(path_input_raw_data_3)
+    
     build_folders(path_output_clean_data_1)
     build_folders(path_output_clean_data_2)
+    build_folders(path_output_clean_data_3)
+
+    dir = os.listdir(path_input_raw_data_2)
+  
+    # Checking if the list is empty or not
+    if len(dir) == 0:
+        print("This folder is empty. Please insert the raw TRACE data as specified in the README.")
+    else:
+        pass
