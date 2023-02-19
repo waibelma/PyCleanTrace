@@ -1,17 +1,19 @@
-"""Read in the daily raw Academic TRACE data and apply the corrections as described in Dick-Nielsen & Poulsen (2019).
-The steps are as follows:
-    Step 1:     Read in the raw datasets. Due to the TRACE reporting change on 06.02.2012 this step needs to be separate for
-                the pre- and post 06.02.2012 period.
-    Step 2:     Adjust the date formats. In particular, the date variables need to be in the correct date format.
-                The trading time needs to be in the correct date-time format.
-    Step 3:     Select the bonds that are to be kept in the dataset. I follow Bessembinder et al. (2018) in keeping only
-                bonds specified as U.S. Corporate Debentures and U.S. Corporate Bank Notes. Bond specifications come
-                from the MERGENT FISD database.
-    Step 4:     Automatically source the directories and folder structures of the raw input data. Store the data on an
-                annual basis. The latter is necessary given the large size of the dataset. This is done separately
-                prior and post the reporting change. Also implement the cleaning steps by Dick-Nielsen & Poulsen (2019)
-                directly at this stage
-    Step 5:     Loop over all years and concatenate the daily dataset and store data on a yearly level
+"""Read in the daily raw Academic TRACE data and apply the corrections as described in Dick-Nielsen 
+& Poulsen (2019). The steps are as follows:
+    Step 1:     Read in the raw datasets. Due to the TRACE reporting change on 06.02.2012 this step 
+                needs to be separate for the pre- and post 06.02.2012 period.
+    Step 2:     Adjust the date formats. In particular, the date variables need to be in the correct
+                date format. The trading time needs to be in the correct date-time format.
+    Step 3:     Select the bonds that are to be kept in the dataset. I follow
+                Bessembinder et al. (2018) in keeping only bonds specified as U.S. Corporate 
+                Debentures and U.S. Corporate Bank Notes. Bond specifications come from the MERGENT 
+                FISD database.
+    Step 4:     Automatically source the directories and folder structures of the raw input data. 
+                Store the data on an annual basis. The latter is necessary given the large size of 
+                the dataset. This is done separately prior and post the reporting change. Also 
+                implement the cleaning steps by Dick-Nielsen & Poulsen (2019) directly at this stage
+    Step 5:     Loop over all years and concatenate the daily dataset and store data on a yearly 
+                level
     
 """
 
@@ -35,8 +37,9 @@ from clean_TRACE import post_2012_clean
 # Step 1
 ########
 def read_in_adj_dtyp_pre_2012(in_path):
-    """Read in the daily raw transaction data and adjust the data types for the period PRIOR to 06.02.2012.
-    On 06.02.2012, FINRA changed the reporting standards which requires a different data formatting.
+    """Read in the daily raw transaction data and adjust the data types for the period PRIOR to 
+    06.02.2012. On 06.02.2012, FINRA changed the reporting standards which requires a different data
+    formatting.
 
     Args:
     --------
@@ -93,8 +96,9 @@ def read_in_adj_dtyp_pre_2012(in_path):
 
 
 def read_in_adj_dtyp_post_2012(in_path):
-    """Read in the daily raw transaction data and adjust the data types for the period AFTER to 06.02.2012.
-    On 06.02.2012, FINRA changed the reporting which requires a different data formatting.
+    """Read in the daily raw transaction data and adjust the data types for the period AFTER to 
+    06.02.2012. On 06.02.2012, FINRA changed the reporting which requires a different data 
+    formatting.
 
     Args:
     --------
@@ -108,9 +112,10 @@ def read_in_adj_dtyp_post_2012(in_path):
 
     # Read in the metadata of the folder. Important to read in as str variables
     # to preserve the leading 0 in the date structures.
-    df = pd.read_csv(in_path, sep="|", engine='python', dtype={'TRD_EXCTN_DT': str, 'TRD_EXCTN_TM': str,
-                                                               'TRD_RPT_DT': str, 'TRD_RPT_TM': str,
-                                                               'TRD_STLMT_DT': str})
+    df = pd.read_csv(in_path, sep="|", engine='python', 
+                              dtype={'TRD_EXCTN_DT': str, 'TRD_EXCTN_TM': str,
+                                     'TRD_RPT_DT': str, 'TRD_RPT_TM': str,
+                                     'TRD_STLMT_DT': str})
     # Drop the last two rows as they only contain FINRA identifier information
     df = df.iloc[:-2]
     # Define the required data types
@@ -174,7 +179,7 @@ def format_ex_tm_dt(df, date_var):
 
     """
 
-    # Indicator for whether  EXCTN_TM = 0. Necessary as sometimes execution time is 0 instead of a time.
+    # Indicator for whether  EXCTN_TM = 0. Necessary as sometimes execution time is 0 instead time.
     df['tmp_{}'.format(date_var[0])] = (df['{}'.format(date_var[0])] == 0) * 1
 
     # Generate trade execution time for trades that do NOT report '0' for trade execution time
@@ -187,12 +192,15 @@ def format_ex_tm_dt(df, date_var):
     df['{}'.format(date_var[0])] = df['{}'.format(format(date_var[0]))].astype(float)
     # Bring the float variable to datetime format (YYYY-MM-DD-HH-MM-SS)
     df.loc[df['tmp_{}'.format(date_var[0])] == 0, '{}'.format(date_var[0])] = (
-        pd.to_datetime(df.loc[df['tmp_{}'.format(date_var[0])] == 0, '{}'.format(date_var[0])], format='%Y%m%d%H%M%S')
+        pd.to_datetime(df.loc[df['tmp_{}'.format(date_var[0])] == 0, '{}'.format(date_var[0])], 
+        format='%Y%m%d%H%M%S')
     )
     # Drop the temp variable
     df = df.drop(columns=['tmp_{}'.format(date_var[0])])
     # Convert the trading day variables in date format
-    df['{}'.format(date_var[1])] = pd.to_datetime(df['{}'.format(date_var[1])], format='%Y%m%d').dt.date
+    df['{}'.format(date_var[1])] = (
+        pd.to_datetime(df['{}'.format(date_var[1])], format='%Y%m%d').dt.date
+    )
 
     return df
 
@@ -214,8 +222,8 @@ def adj_dt_format_pre_2012(in_path):
     # Read in the dataset using read_in_adj_dtyp()
     df = read_in_adj_dtyp_pre_2012(in_path)
 
-    # Sometimes there are typos which make the date too large (e.g. 30140101 instead of 20140101). This
-    # is excluded by the code below. 20810401 is the maximal number possible
+    # Sometimes there are typos which make the date too large (e.g. 30140101 instead of 20140101). 
+    # This is excluded by the code below. 20810401 is the maximal number possible
     date_vars = ['TRD_EXCTN_DT', 'TRD_RPT_DT', 'TRD_STLMT_DT']
     for dv in date_vars:
         df = df[(df[dv].astype(float) > 20200101) == False]
@@ -235,8 +243,8 @@ def adj_dt_format_pre_2012(in_path):
 
 
 def adj_dt_format_post_2012(in_path):
-    """Read in the daily raw data prior to 06.02.2012, adjust the date format of the date variables and
-    return the daily cleaned TRACE DataFrame.
+    """Read in the daily raw data prior to 06.02.2012, adjust the date format of the date variables 
+    and return the daily cleaned TRACE DataFrame.
 
     Args:
     --------
@@ -253,8 +261,8 @@ def adj_dt_format_post_2012(in_path):
 
     # It was noted that sometimes there are typos in the raw data which make the date too large
     # (e.g. 30140101 instead of 20140101). This is excluded by the code below:
-    date_vars = ['TRD_EXCTN_DT', 'TRD_RPT_DT', 'TRD_STLMT_DT', 'SYSTM_CNTRL_DT', 'PREV_TRD_CNTRL_DT',
-                 'FIRST_TRD_CNTRL_DT']
+    date_vars = ['TRD_EXCTN_DT', 'TRD_RPT_DT', 'TRD_STLMT_DT', 'SYSTM_CNTRL_DT', 
+                 'PREV_TRD_CNTRL_DT', 'FIRST_TRD_CNTRL_DT']
     for dv in date_vars:
         df = df[(df[dv].astype(float) > 20200101) == False]
 
@@ -279,8 +287,8 @@ def adj_dt_format_post_2012(in_path):
 # Step 3
 ########
 def select_bonds(path):
-    """"Select bonds based on characteristics according to Bessembinder et al. (2018). Only keep the bond transactions
-    that fulfill the following criteria:
+    """"Select bonds based on characteristics according to Bessembinder et al. (2018). Only keep
+    the bond transactions that fulfill the following criteria:
         i)   bond type is either U.S. Corporate Debenture or U.S. Corporate Bank Note
         ii)  bond is non-puttable
         iii) bond has a reported maturity
@@ -297,8 +305,8 @@ def select_bonds(path):
 
     # Read in the Mergent issue data
     issue_data = pd.read_pickle(path + 'src/original_data/Mergent_FISD/' + 'issue_data.pkl')
-    # Follow Bessembinder et al. (2018) in keeping only non-puttable U.S. Corporate Debentures and U.S.
-    # Corporate Bank Notes (bond type = CDEB or USBN) with a reported maturity
+    # Follow Bessembinder et al. (2018) in keeping only non-puttable U.S. Corporate Debentures 
+    # and U.S. Corporate Bank Notes (bond type = CDEB or USBN) with a reported maturity
     issue_data = issue_data.loc[issue_data.bond_type.isin(['CDEB', 'USBN'])]
     issue_data = (issue_data.loc[issue_data.putable == 'N']).dropna(subset=['maturity'])
     # Define the full CUSIP ID
@@ -312,20 +320,23 @@ def select_bonds(path):
 # Step 4
 ########
 def read_post_2012(year_ind, annual_fld, path):
-    """Read in TRACE data in the years post 2012 (i.e. > 2012). In a first step, source automatically
-    the directories where the files are stored. In a second step, loop through all days in a yearly folder
-    and clean and concatenate the data to generate a yearly file. Only keep the bonds as specified in select_bonds().
+    """Read in TRACE data in the years post 2012 (i.e. > 2012). In a first step, source 
+    automatically  the directories where the files are stored. In a second step, loop through all 
+    days in a yearly folder and clean and concatenate the data to generate a yearly file. 
+    Only keep the bonds as specified in select_bonds().
 
     Args:
     --------
-    year_ind (int):  Year indicator for which the TRACE dataset is to be generated (0 = 2002, 1 = 2003, etc.)
+    year_ind (int):  Year indicator for which the TRACE dataset is to be generated 
+    (0 = 2002, 1 = 2003, etc.)
     annual_fld (str): List of annual folder names
     path (str): Project root path
 
     Returns:
     --------
     df (pd.DataFrame): Output dataset where all daily files are concatenated to one yearly file.
-    unmatched (pd.DataFrame): Necessary to return the unmatched trades for the cleaning step of the pre 2012 data
+    unmatched (pd.DataFrame): Necessary to return the unmatched trades for the cleaning step of 
+    the pre 2012 data
 
     """
 
@@ -334,12 +345,14 @@ def read_post_2012(year_ind, annual_fld, path):
     # Define the path to the annual TRACE dataset that is to be cleaned
     ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
 
-    # Get a list of the daily files within the annual folder. Note that the actual transaction data filename does
-    # NOT start with '0033-corp-bond' whereas the supplementary files do. Thus only transaction data is selected.
+    # Get a list of the daily files within the annual folder. Note that the actual transaction data
+    # filename does NOT start with '0033-corp-bond' whereas the supplementary files do.
+    # Thus only transaction data is selected.
     daily_files = (
         [f for f in sorted(os.listdir(ann_fld_path))
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
     )
+    pd.DataFrame(daily_files).to_pickle('C:/Users/Martin/Desktop/test.pkl')
     # Initialize trsct count
     # Loop over all days in one yearly folder and concatenate the dataset
     for day in range(0, len(daily_files)):
@@ -360,7 +373,9 @@ def read_post_2012(year_ind, annual_fld, path):
     # Implement the Dick-Nielsen (2019) corrections using post_2012_clean()
     df_post, unmatched = post_2012_clean(df)
     # Store the yearly TRACE data to disc:
-    df_post.to_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year_ind + 1 + 2000))
+    df_post.to_pickle(
+        path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year_ind + 1 + 2000)
+    )
     # Drop DataFrame from memory to save memory space
     del [df]
     gc.collect()
@@ -370,10 +385,11 @@ def read_post_2012(year_ind, annual_fld, path):
 
 
 def read_2012(year_ind, annual_fld, path, unmatched_in):
-    """Read in TRACE data in the year 2012. FINRA changed the reporting on 06.02.2012 which requires a different
-    reading-in procedure before and after this date. In a first step, source automatically
-    the directories where the files are stored. In a second step, loop through all days in a yearly folder
-    and clean and concatenate the data to generate a yearly file. Only keep the bonds as specified in select_bonds().
+    """Read in TRACE data in the year 2012. FINRA changed the reporting on 06.02.2012 which requires 
+    a different reading-in procedure before and after this date. In a first step, source
+    automatically the directories where the files are stored. In a second step, loop through all 
+    days in a yearly folder and clean and concatenate the data to generate a yearly file. 
+    Only keep the bonds as specified in select_bonds(). 
     Note: 06.02.2012 is the 23rd trading day of this year.
 
     Args:
@@ -393,8 +409,9 @@ def read_2012(year_ind, annual_fld, path, unmatched_in):
     cusip_list_keep = select_bonds(path)
     # Define the path to the annual TRACE dataset that is to be cleaned
     ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
-    # Get a list of the daily files within the annual folder. Note that the actual transaction data filename does
-    # NOT start with '0033-corp-bond' whereas the supplementary files do. Thus only transaction data is selected.
+    # Get a list of the daily files within the annual folder. Note that the actual transaction data 
+    # filename does. NOT start with '0033-corp-bond' whereas the supplementary files do. 
+    #Thus only transaction data is selected.
     daily_files = (
         [f for f in sorted(os.listdir(ann_fld_path))
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
@@ -411,11 +428,14 @@ def read_2012(year_ind, annual_fld, path, unmatched_in):
             # Read in the new daily dataset.
             df_2012_prior_tmp = adj_dt_format_pre_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
-            df_2012_prior_tmp = df_2012_prior_tmp.loc[df_2012_prior_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+            df_2012_prior_tmp = (
+                df_2012_prior_tmp.loc[df_2012_prior_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+            )
             # Concatenate the datasets
             df_2012_prior = pd.concat([df_2012_prior, df_2012_prior_tmp])
         elif (day == 23):
-            # Read in the new daily dataset for the first day after the reporting standards changed on 06.02.2012
+            # Read in the new daily dataset for the first day after the reporting standards 
+            # changed on 06.02.2012
             df_2012_post = adj_dt_format_post_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
             df_2012_post = df_2012_post.loc[df_2012_post['CUSIP_ID'].isin(cusip_list_keep)]
@@ -423,7 +443,9 @@ def read_2012(year_ind, annual_fld, path, unmatched_in):
             # Read in the new daily dataset.
             df_2012_post_tmp = adj_dt_format_post_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
-            df_2012_post_tmp = df_2012_post_tmp.loc[df_2012_post_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+            df_2012_post_tmp = (
+                df_2012_post_tmp.loc[df_2012_post_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+            )
             # Concatenate the datasets
             df_2012_post = pd.concat([df_2012_post, df_2012_post_tmp])
 
@@ -446,9 +468,10 @@ def read_2012(year_ind, annual_fld, path, unmatched_in):
 
 
 def read_pre_2012(year_ind, annual_fld, path, unmatched_in):
-    """Read in TRACE data in the years prior to 2012 (i.e. <= 2011). In a first step source automatically
-    the directories where the files are stored. In a second step, loop through all days in a yearly folder
-    and clean and concatenate the data to generate a yearly file. Only keep the bonds as specified in select_bonds().
+    """Read in TRACE data in the years prior to 2012 (i.e. <= 2011). In a first step source 
+    automatically the directories where the files are stored. In a second step, loop through all 
+    days in a yearly folder  and clean and concatenate the data to generate a yearly file. 
+    Only keep the bonds as specified in select_bonds().
 
     Args:
     --------
@@ -466,8 +489,9 @@ def read_pre_2012(year_ind, annual_fld, path, unmatched_in):
     cusip_list_keep = select_bonds(path)
     # Define the path to the annual TRACE folder that is to be cleared
     ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
-    # Get a list of the daily files within the annual folder. Note that the actual transaction data filename does
-    # NOT start with '0033-corp-bond' whereas the supplementary files do. Thus only transaction data is selected.
+    # Get a list of the daily files within the annual folder. Note that the actual transaction data 
+    # filename does. NOT start with '0033-corp-bond' whereas the supplementary files do. 
+    # Thus only transaction data is selected.
     daily_files = (
         [f for f in sorted(os.listdir(ann_fld_path))
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
@@ -494,7 +518,9 @@ def read_pre_2012(year_ind, annual_fld, path, unmatched_in):
     # Implement the Dick-Nielsen (2019) corrections using post_2012_clean()
     df_prior = prior_2012_clean(df, unmatched_in)
     # Store the yearly TRACE data
-    df_prior.to_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year_ind + 1 + 2000))
+    df_prior.to_pickle(
+        path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year_ind + 1 + 2000)
+    )
     # Drop DataFrame from memory to save memory space
     del [df_prior]
     gc.collect()
@@ -504,8 +530,9 @@ def read_pre_2012(year_ind, annual_fld, path, unmatched_in):
 # Step 5
 ########
 def read_TRACE_all(path):
-    """Read in the entire TRACE dataset by executing the above steps. I.e., read in the daily text files, apply the
-    correction steps and concatenate all files on a yearly level. Then save the dataset for each year in pickle format.
+    """Read in the entire TRACE dataset by executing the above steps. I.e., read in the daily text 
+    files, apply the correction steps and concatenate all files on a yearly level. 
+    Then save the dataset for each year in pickle format.
 
     Args:
     --------
@@ -521,12 +548,13 @@ def read_TRACE_all(path):
         [f for f in sorted(os.listdir(path + 'src/original_data/academic_TRACE/TRACE_raw/'))
          if not f.startswith('.')]
     )
-    # Apply the reading-in procedure in the respective years. Loop backwards to assure that the unmatched data
-    # of the post period are available for the pre-period.
+    # Apply the reading-in procedure in the respective years. Loop backwards to assure that the 
+    # unmatched data of the post period are available for the pre-period.
     for year_ind in range(len(annual_fld_names), 0, -1):
         if year_ind == len(annual_fld_names):
             unmatched = read_post_2012(year_ind, annual_fld_names, path)
-        # Note: 11 corresponds to 2012 which is the cutoff year due to the change in the TRACE dataset format
+        # Note: 11 corresponds to 2012 which is the cutoff year due to the change in the TRACE 
+        # dataset format
         elif (year_ind < len(annual_fld_names)) & (year_ind > 11):
             unmatched_tmp = read_post_2012(year_ind, annual_fld_names, path)
             unmatched = pd.concat([unmatched, unmatched_tmp])
@@ -538,8 +566,9 @@ def read_TRACE_all(path):
 
 
 def read_TRACE_all_PARALLEL_post_2012(path, annual_fld_names, year_ind):
-    """Read in the entire TRACE dataset by executing the above steps. I.e., read in the daily text files, apply the
-    correction steps and concatenate all files on a yearly level. Then save the dataset for each year in pickle format.
+    """Read in the entire TRACE dataset by executing the above steps. I.e., read in the daily text 
+    files, apply the correction steps and concatenate all files on a yearly level. 
+    Then save the dataset for each year in pickle format.
 
     Args:
     -----------
@@ -551,11 +580,12 @@ def read_TRACE_all_PARALLEL_post_2012(path, annual_fld_names, year_ind):
 
     """
 
-    # Apply the reading-in procedure in the respective years. Loop backwards to assure that the unmatched data
-    # of the post period are available for the pre-period.
+    # Apply the reading-in procedure in the respective years. Loop backwards to assure that the 
+    # unmatched data of the post period are available for the pre-period.
     if year_ind == len(annual_fld_names):
         unmatched = read_post_2012(year_ind, annual_fld_names, path)
-    # Note: 11 corresponds to 2012 which is the cutoff year due to the change in the TRACE dataset format
+    # Note: 11 corresponds to 2012 which is the cutoff year due to the change in the TRACE dataset 
+    #format
     elif (year_ind < len(annual_fld_names)) & (year_ind > 11):
         unmatched = read_post_2012(year_ind, annual_fld_names, path)
     else:
@@ -565,8 +595,9 @@ def read_TRACE_all_PARALLEL_post_2012(path, annual_fld_names, year_ind):
 
 
 def read_TRACE_all_PARALLEL_prior_2012(path, annual_fld_names, unmatched, year_ind):
-    """Read in the entire TRACE dataset by executing the above steps. I.e., read in the daily text files, apply the
-    correction steps and concatenate all files on a yearly level. Then save the dataset for each year in pickle format.
+    """Read in the entire TRACE dataset by executing the above steps. I.e., read in the daily text 
+    files, apply the correction steps and concatenate all files on a yearly level. Then save the
+     dataset for each year in pickle format.
 
     Args:
     --------
@@ -578,8 +609,8 @@ def read_TRACE_all_PARALLEL_prior_2012(path, annual_fld_names, unmatched, year_i
 
     """
 
-    # Apply the reading-in procedure in the respective years. Loop backwards to assure that the unmatched data
-    # of the post period are available for the pre-period.
+    # Apply the reading-in procedure in the respective years. Loop backwards to assure that the 
+    # unmatched data of the post period are available for the pre-period.
     if year_ind < 11:
         read_pre_2012(year_ind, annual_fld_names, path, unmatched)
     else:
@@ -589,12 +620,14 @@ def read_TRACE_all_PARALLEL_prior_2012(path, annual_fld_names, unmatched, year_i
 
 
 def read_TRACE_all_PARALLEL_2(path, N_workers):
-    """Parallelize the reading-in steps to increase performance. Read in the annual folder names in a first step.
+    """Parallelize the reading-in steps to increase performance. Read in the annual folder names 
+    in a first step.
 
     Args:
     --------
     path (str): Project root path
-    N_workers (int): Define how many cores should be allocated to the reading-in step (-1 -> use all available cores)
+    N_workers (int): Define how many cores should be allocated to the reading-in step 
+    (-1 -> use all available cores)
 
     Returns:
     --------
@@ -612,7 +645,8 @@ def read_TRACE_all_PARALLEL_2(path, N_workers):
 
     # Perform the parallelization from the last sample year until 2013
     unmatched_out_parallel = (
-        Parallel(n_jobs = N_workers)(delayed(read_TRACE_all_PARALLEL_post_2012)(path, annual_fld_names, year) for year in range(len(annual_fld_names), 11, -1))
+        Parallel(n_jobs = N_workers)(delayed(read_TRACE_all_PARALLEL_post_2012)(path, 
+        annual_fld_names, year) for year in range(len(annual_fld_names), 11, -1))
     )
     unmatched = pd.concat(unmatched_out_parallel)
     print("The reading-in for the most recent sample year until 2013 is finalized")
@@ -623,19 +657,22 @@ def read_TRACE_all_PARALLEL_2(path, N_workers):
 
 
     # Perform the reading-in for the years 2002 - 2011:
-    Parallel(n_jobs=N_workers)(delayed(read_TRACE_all_PARALLEL_prior_2012)(path, annual_fld_names, unmatched, year) for year in range(10, 0, -1))
+    Parallel(n_jobs=N_workers)(delayed(read_TRACE_all_PARALLEL_prior_2012)(path, annual_fld_names, 
+        unmatched, year) for year in range(10, 0, -1))
     print("The reading-in for the years 2011 - 2002 is finalized")
 
-    print("SUCCESS! The reading-in and concatenation to individual year files (including the Dick-Nielsen and Poulsen (2019) correction is finalised")
+    print(
+        "SUCCESS! The reading-in and concatenation to individual year files finalised")
 
 
 
 
 def get_all_rpt_dates(path):
-    """Get all reporting dates in the raw TRACE data. That is, extract the date from every single raw.txt file in
-    the TRACE data. This is important as e.g. on some weekdays (where there is no holiday) there is no TRACE report
-    available. On such days the number of transactions is very low and should be filtered out. Save the final list
-    with all available dates in pkl format.
+    """Get all reporting dates in the raw TRACE data. That is, extract the date from every single 
+    raw.txt file in the TRACE data. This is important as e.g. on some weekdays 
+    (where there is no holiday) there is no TRACE report  available. On such days the number of 
+    transactions is very low and should be filtered out. Save the final list with all available 
+    dates in pkl format.
 
     Args:
     --------
@@ -654,8 +691,9 @@ def get_all_rpt_dates(path):
     TRACE_rpt_days_all = []
     for year in range(0, len(annual_fld_names)):
         ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year]
-        # Get a list of the daily files within the annual folder. Note that the actual transaction data filename does NOT
-        # start with '0033-corp-bond' whereas the supplementary files do. Thus only transaction data is selected.
+        # Get a list of the daily files within the annual folder. Note that the actual transaction
+        #  data filename does NOT start with '0033-corp-bond' whereas the supplementary files do. 
+        # Thus only transaction data is selected.
         daily_files = (
             [f for f in sorted(os.listdir(ann_fld_path))
              if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
@@ -668,8 +706,9 @@ def get_all_rpt_dates(path):
 
 
 def get_full_sample_info(path):
-    """Get the total number of transactions available in the raw TRACE data. This is to get information on the total
-    size of the raw data which is unknown as I directly perform filtering in the reading-in step to save on memory.
+    """Get the total number of transactions available in the raw TRACE data. This is to get 
+    information on the total size of the raw data which is unknown as I directly perform filtering
+    in the reading-in step to save on memory.
 
     Args:
     --------
@@ -688,25 +727,37 @@ def get_full_sample_info(path):
          if not f.startswith('.')]
     )
     for year in range(len(annual_fld_names), 0, -1):
-        ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year - 1]
+        ann_fld_path = (
+            path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year - 1]
+        )
         daily_files = (
             [f for f in sorted(os.listdir(ann_fld_path))
              if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
         )
         if year == len(annual_fld_names):
             for day in range(0, len(daily_files)):
-                total_trsct_COUNT = total_trsct_COUNT + len(adj_dt_format_post_2012(ann_fld_path / daily_files[day]))
+                total_trsct_COUNT = (
+                    total_trsct_COUNT + len(adj_dt_format_post_2012(ann_fld_path/daily_files[day]))
+                )
         elif (year < len(annual_fld_names)) & (year > 11):
             for day in range(0, len(daily_files)):
-                total_trsct_COUNT = total_trsct_COUNT + len(adj_dt_format_post_2012(ann_fld_path / daily_files[day]))
+                total_trsct_COUNT = (
+                    total_trsct_COUNT + len(adj_dt_format_post_2012(ann_fld_path/daily_files[day]))
+                )
         elif year == 11:  # corresponds to 2012 (!!mind the reverse counting!!)
             for day in range(23, len(daily_files)):
-                total_trsct_COUNT = total_trsct_COUNT + len(adj_dt_format_post_2012(ann_fld_path / daily_files[day]))
+                total_trsct_COUNT = (
+                    total_trsct_COUNT + len(adj_dt_format_post_2012(ann_fld_path/daily_files[day]))
+                )
             for day in range(0, 23):
-                total_trsct_COUNT = total_trsct_COUNT + len(adj_dt_format_pre_2012(ann_fld_path / daily_files[day]))
+                total_trsct_COUNT = (
+                    total_trsct_COUNT + len(adj_dt_format_pre_2012(ann_fld_path/daily_files[day]))
+                )
         else:
             for day in range(0, len(daily_files)):
-                total_trsct_COUNT = total_trsct_COUNT + len(adj_dt_format_pre_2012(ann_fld_path / daily_files[day]))
+                total_trsct_COUNT = (
+                    total_trsct_COUNT + len(adj_dt_format_pre_2012(ann_fld_path/daily_files[day]))
+                )
 
     return total_trsct_COUNT
 
