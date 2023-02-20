@@ -24,17 +24,18 @@ def build_folders(path_in):
         else:
             raise ValueError('The database folder is not constructed')
 
+
 def construct_nec_folders(project_path):
-    """Check if an exisiting file path exists. If not create the necessry folder such that the 
-    file path existis.
+    """Check if an exisiting folder exists. If this is not the case, automatically create the 
+    folder.
 
     Args:
     --------
-    path_in (str): Project root path
+    project_path (str): Project root path
 
     Returns:
     --------
-    Generates the relevant file path
+    Generates the relevant folders if they do not yet exist.
     """
     
     ## Define the file paths
@@ -60,7 +61,9 @@ def construct_nec_folders(project_path):
     # Checking if the list is empty or not
     if len(dir) == 0:
         print("")
-        raise ValueError('This folder is empty. Please insert the raw TRACE data as specified in the README.')
+        raise ValueError(
+            'Folder is empty. Please insert the raw TRACE data as outlinedin the README file.'
+            )
         print("")
     else:
         pass

@@ -2,7 +2,8 @@
 Perform the cleaning steps as outlined in Dick-Nielsen & Poulsen (2019). In a next step
 perform cleaning steps as described in Bessembinder et al. (2018) and Anand et al. (2021).
 
-Step 1:     Perform the cleaning steps as in Bessembinder et al. (2018) and Anand et al. (2021). The naming of the
+Step 1:     Perform the cleaning steps as in Bessembinder et al. (2018) and Anand et al. (2021). 
+            The naming of the
             variables is kept as analoguous as possible to  Dick-Nielsen & Poulsen (2019) to assure comparability.
             The code is tested on a smaller sample with the SAS code by Dick-Nielsen & Poulsen (2019) and is found
             to produce identical results.
