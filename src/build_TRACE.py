@@ -128,6 +128,8 @@ if ((os.path.isfile(path_TRACE_raw_clean_first)) & (os.path.isfile(path_TRACE_ra
 elif not os.path.isfile(path_TRACE_raw_clean_first):
     print("")
     print("STEP 1.1: Start reading and and concatenating the raw TRACE data")
-    read_TRACE_all(project_path)
+    read_TRACE_all(project_path, dataset_specs)
     print("STEP 1.1: Finished reading and and concatenating the raw TRACE data")
+
+
 
