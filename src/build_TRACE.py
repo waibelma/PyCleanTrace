@@ -2,7 +2,7 @@
 Build the final cleaned and concatenated TRACE dataset. Loads all necessary functions specified in 
 the data management files to merge the reading-in and data cleeaning steps so as to produce the 
 final dataset. Define all final dataset specifications in the dataset_specs dictionary.
-"""
+""" 
 
 import gc
 import time
@@ -12,6 +12,7 @@ pd.options.mode.chained_assignment = None
 t0 = time.time()
 import numpy as np
 import os
+from pathlib import Path
 
 # Import function to read in daily raw data and store on a yearly level
 from read_TRACE import read_TRACE_all
@@ -53,7 +54,7 @@ from general_functions import construct_nec_folders
 ## 0.3) Set up file paths to check it read-in steps can be skipped or not
 ######
 # Project root path
-project_path = 'C:/Users/Martin/Desktop/Trace/Clean-Academic-TRACE-data/'
+project_path = str(Path(os.getcwd()).parent)
 
 # Construct the necessary input/output folders
 construct_nec_folders(project_path)
