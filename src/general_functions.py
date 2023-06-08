@@ -39,13 +39,13 @@ def construct_nec_folders(project_path):
     """
     
     ## Define the file paths
-    path_input_raw_data_1 = project_path + 'src/original_data/academic_TRACE'
-    path_input_raw_data_2 = project_path + 'src/original_data/academic_TRACE/TRACE_raw'
-    path_input_raw_data_3 = project_path + 'src/original_data/Mergent_FISD'
+    path_input_raw_data_1 = project_path + '/src/original_data/academic_TRACE'
+    path_input_raw_data_2 = project_path + '/src/original_data/academic_TRACE/TRACE_raw'
+    path_input_raw_data_3 = project_path + '/src/original_data/Mergent_FISD'
 
-    path_output_clean_data_1 = project_path + 'bld/data'
-    path_output_clean_data_2 = project_path + 'bld/data/TRACE/'
-    path_output_clean_data_3 = project_path + 'bld/data/TRACE/TRACE_raw_clean'
+    path_output_clean_data_1 = project_path + '/bld/data'
+    path_output_clean_data_2 = project_path + '/bld/data/TRACE/'
+    path_output_clean_data_3 = project_path + '/bld/data/TRACE/TRACE_raw_clean'
 
     # Construct the relevant folders if they are not already exisiting
     build_folders(path_input_raw_data_1)

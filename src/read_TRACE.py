@@ -304,7 +304,7 @@ def select_bonds(path):
     """
 
     # Read in the Mergent issue data
-    issue_data = pd.read_pickle(path + 'src/original_data/Mergent_FISD/' + 'issue_data.pkl')
+    issue_data = pd.read_pickle(path + '/src/original_data/Mergent_FISD/' + 'issue_data.pkl')
     # Follow Bessembinder et al. (2018) in keeping only non-puttable U.S. Corporate Debentures 
     # and U.S. Corporate Bank Notes (bond type = CDEB or USBN) with a reported maturity
     issue_data = issue_data.loc[issue_data.bond_type.isin(['CDEB', 'USBN'])]
@@ -343,7 +343,7 @@ def read_post_2012(year_ind, annual_fld, path):
     # Get list of CUSIP IDs that are to be maintained in the sample using select_bonds()
     cusip_list_keep = select_bonds(path)
     # Define the path to the annual TRACE dataset that is to be cleaned
-    ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
+    ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
 
     # Get a list of the daily files within the annual folder. Note that the actual transaction data
     # filename does NOT start with '0033-corp-bond' whereas the supplementary files do.
@@ -408,7 +408,7 @@ def read_2012(year_ind, annual_fld, path, unmatched_in):
     # Get list of CUSIP IDs that are to be maintained in the sample using select_bonds()
     cusip_list_keep = select_bonds(path)
     # Define the path to the annual TRACE dataset that is to be cleaned
-    ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
+    ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
     # Get a list of the daily files within the annual folder. Note that the actual transaction data 
     # filename does. NOT start with '0033-corp-bond' whereas the supplementary files do. 
     #Thus only transaction data is selected.
@@ -488,7 +488,7 @@ def read_pre_2012(year_ind, annual_fld, path, unmatched_in):
     # Get list of CUSIP IDs that are to be maintained in the sample using select_bonds()
     cusip_list_keep = select_bonds(path)
     # Define the path to the annual TRACE folder that is to be cleared
-    ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
+    ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year_ind - 1]
     # Get a list of the daily files within the annual folder. Note that the actual transaction data 
     # filename does. NOT start with '0033-corp-bond' whereas the supplementary files do. 
     # Thus only transaction data is selected.
@@ -545,7 +545,7 @@ def read_TRACE_all(path):
     """
     # Get the name of the annual TRACE data folders. Exclude the listing of system files
     annual_fld_names = (
-        [f for f in sorted(os.listdir(path + 'src/original_data/academic_TRACE/TRACE_raw/'))
+        [f for f in sorted(os.listdir(path + '/src/original_data/academic_TRACE/TRACE_raw/'))
          if not f.startswith('.')]
     )
     # Apply the reading-in procedure in the respective years. Loop backwards to assure that the 
@@ -639,7 +639,7 @@ def read_TRACE_all_PARALLEL_2(path, N_workers):
 
     # Get the name of the annual TRACE data folders. Exclude the listing of system files
     annual_fld_names = (
-        [f for f in sorted(os.listdir(path + 'src/original_data/academic_TRACE/TRACE_raw/'))
+        [f for f in sorted(os.listdir(path + '/src/original_data/academic_TRACE/TRACE_raw/'))
          if not f.startswith('.')]
     )
 
@@ -684,13 +684,13 @@ def get_all_rpt_dates(path):
 
     """
     annual_fld_names = (
-        [f for f in sorted(os.listdir(path + 'src/original_data/academic_TRACE/TRACE_raw/'))
+        [f for f in sorted(os.listdir(path + '/src/original_data/academic_TRACE/TRACE_raw/'))
          if not (f.startswith('.') | f.startswith('zip'))]
     )
     # Initialize list
     TRACE_rpt_days_all = []
     for year in range(0, len(annual_fld_names)):
-        ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year]
+        ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year]
         # Get a list of the daily files within the annual folder. Note that the actual transaction
         #  data filename does NOT start with '0033-corp-bond' whereas the supplementary files do. 
         # Thus only transaction data is selected.
@@ -723,12 +723,12 @@ def get_full_sample_info(path):
     total_trsct_COUNT = 0
     # Get the name of the annual TRACE data folders. Exclude the listing of system files
     annual_fld_names = (
-        [f for f in sorted(os.listdir(path + 'src/original_data/academic_TRACE/TRACE_raw/'))
+        [f for f in sorted(os.listdir(path + '/src/original_data/academic_TRACE/TRACE_raw/'))
          if not f.startswith('.')]
     )
     for year in range(len(annual_fld_names), 0, -1):
         ann_fld_path = (
-            path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year - 1]
+            path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year - 1]
         )
         daily_files = (
             [f for f in sorted(os.listdir(ann_fld_path))
