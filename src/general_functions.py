@@ -20,7 +20,7 @@ def build_folders(path_in):
             #os.system("chmod 777 " + path_in)
         elif platform=="darwin":
             os.system("sudo mkdir " + path_in)
-            #os.system("sudo chmod 777 " + path_in)
+            os.system("sudo chmod 775 " + path_in)
         else:
             raise ValueError('The database folder is not constructed')
 
