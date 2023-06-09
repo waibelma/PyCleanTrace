@@ -1,6 +1,6 @@
 Python Code to Clean Academic TRACE data following the procedure outlined in [Dick-Nielsen & Poulsen (2019)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3456082)
 -------------
-**Clean_Academic_TRACE** is an integrated Python code that facilitates the i) reading of the raw data from the text files, ii) the concatenation of the individual TRACE datasets, iii) the implementation of the cleaning and correction steps as in Dick-Nielsen & Poulsen (2019), and iv) The generation of relevant  microstructure variables and the implementation of additional cleaning steps standard in the literature (compare [Dick-Nielsen & Poulsen (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12694))
+**Clean_Academic_TRACE** is an integrated Python code that facilitates the i) reading of the raw data from the text files, ii) the concatenation of the individual TRACE datasets, iii) the implementation of the cleaning and correction steps as in Dick-Nielsen & Poulsen (2019), and iv) The generation of relevant  microstructure variables and the implementation of additional cleaning steps standard in the literature (compare [Bessembinder (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12694))
 
 The original cleaning code by Dick-Nielsen & Poulsen (2019) is written in SAS. **Clean_Academic_TRACE** is meant to provide an open-source alternative to facilitate the data management when working with Academic TRACE in Python.
 
@@ -18,20 +18,35 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 3) Place the raw TRACE data (unzipped on an annual level) in the folder  src/original_data/academic_TRACE/TRACE_raw
 
-4) Place the Mergent FISD data in the folder src/original_data/Mergent_FISD. There has to be one dataset for bond issue information and one dataset for the rating information. For the structure of the dataset please refer to the sample datasets **issue_data_sample.pkl** and **ratings_sample.pkl**
+4) Place the Mergent FISD data in the folder src/original_data/Mergent_FISD. There has to be one dataset for bond issue information and one dataset for the rating information. For the structure of the dataset please refer to the sample datasets **illustration_issue_data.csv** and **illustration_ratings.csv**. These datasets can be found in the folder **src/original_data/Mergent_FISD/sample_data**
 
-5) Change the **project_path** in the file **build_TRACE.py** into your corresponding path
+5) Adjust the start and end year of the final sample in the dictionary in **build_TRACE.py**. The start year is determined by the year of the first TRACE folder and the end year by the year of the last folder, respectively.
 
-6) Navigate in the terminal into the **src** folder and initiate the data generation process via **sudo python build_TRACE.py**
+6) Re-run  **sudo python build_TRACE.py** in the **src** folder. The process will start automatically and read, concatenate, and clean the data. In a last step relevant microstructure variables will be generated. 
 
 
    6.1) The code loops through the available years backwards in time (starting with the largest year) and reads the raw data, performs the cleaning steps
         and concatenates the yearly datasets to one final cleaned and concatenated TRACE dataset.
 
 
-Description
+Description of subfolders
 -------------
-Below we list a description of the toolbox structure as well as a short description of the file content.
+
+1) At the source, the project contains a **src** folder and a **bld** folder. The **src** folder contains all scripts as well as the raw input data. The **bld** folder contains all processed (intermediate and final) data
+
+2)  **build_TRACE.py**: This script wraps all subscripts and dictates the order in which processes are executed. The script contains a dictionary with the relevant specifications, such as time span, selected variables, etc.
+
+2)  **general_functions.py**: This script specifies all functions that automatically set up the relevant folders and directories where the processed datasets are stored. It also checks whether the required data already exists and only runs the code if the final data is not yet there
+
+3)   **read_TRACE.py**: This script defines all functions necessary to read in the raw data files from the respective subfolders. It further specifies the concatenation of the daily txt. files to a yearly dataset that is saved in an intermediate step
+
+4)  **clean_TRACE.py**: This script specifies all cleaning steps. It includes general cleaning steps that handle the conversion of the raw data types and specific cleaning steps that follow what is common in the literature (compare Bessembinder et al. (2018)).
+
+5)  **read_bond_background_TRACE.py**: This script reads out the additional bond background information that ships in with TRACE
+
+5)  **concatenate_merge_TRACE_MERGENT.py**: This script manages the concatenation of the yearly raw data and merges relevant bond characteristics from MERGENT. It also handles bond inclusion/exclusion based on bond characteristics
+
+5)  **prepare_variables.py**: This script outlines the construction of relevant microstructure variables (such as the USD trading volume)
 
 
 
