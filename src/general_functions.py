@@ -67,7 +67,7 @@ def construct_nec_folders(project_path):
     if len(dir) == 0:
         print("")
         raise ValueError(
-            'Folder is empty. Please insert the raw TRACE data as outlinedin the README file.'
+            'Folder is empty. Please insert the raw data as outlinedin the README file. Specifically, include i) the raw TRACE data, ii) the MERGENT FISD issue data, and iii) the MERGENT FISD rating data'
             )
         print("")
     else:
