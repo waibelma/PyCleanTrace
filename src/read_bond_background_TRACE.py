@@ -7,6 +7,7 @@ coupon rate.
 """
 
 import pandas as pd
+import numpy as np
 pd.options.mode.chained_assignment = None
 import os
 from datetime import datetime
@@ -56,7 +57,7 @@ def read_bond_info(in_path):
 
     return df
 
-def def_unique_bond_info(path):
+def get_unique_bond_info(path, dataset_specs_in):
     """
     Construct one dataset containing all unique CUSIPs that are ever registered over the entire sample period.
     Note: Every day information on the traded bonds is stored in the file "0033-corp-bond-YYYY-MM-DD.txt"
@@ -78,12 +79,19 @@ def def_unique_bond_info(path):
     """
     # Define the folder path to the raw TRACE data
     annual_fld = (
-        [f for f in sorted(os.listdir(path + 'src/original_data/academic_TRACE/TRACE_raw/'))
+        [f for f in sorted(os.listdir(path + '/src/original_data/academic_TRACE/TRACE_raw/'))
          if not f.startswith('.')]
     )
+    # Extract the total year range based on the starting and end year
+    year_range = year_range = np.arange(dataset_specs_in['sample_time_span'][0], dataset_specs_in['sample_time_span'][1]+1)
+
+
     # Loop over all years in the sample
-    for year in range(0, len(annual_fld)):
-        ann_fld_path = path + 'src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[year]
+    for i in range(0, len(annual_fld)):
+        # Extract the current year
+        year = year_range[i]
+
+        ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld[i]
         # Get a list of the daily files within the annual folder (both basic and supplemental)
         daily_files_basic = (
             [f for f in sorted(os.listdir(ann_fld_path))
@@ -96,18 +104,17 @@ def def_unique_bond_info(path):
                      f.startswith('.'))]
         )
         # Loop over all sample days in the respective year
-        for day in range(0, len(daily_files_basic)):
-            if year >= 10:
-                print('Currently reading Year: 20{}, Trading Day: {}'.format(year+2, day))
-            else:
-                print('Currently reading Year: 200{}, Trading Day: {}'.format(year+2, day))
+        #for day in range(0, len(daily_files_basic)):
+        for day in range(0, 3):
+            print('Currently reading Year: {}, Trading Day: {}'.format(year, day))
+
             # Note that there were no supplementary files prior to the reform in 2012-02-06. Thus, this needs
             # to be treated separately
             if (datetime.strptime('{}'.format(daily_files_basic[day][-14:-4]), '%Y-%m-%d') <=
                 datetime.strptime('2012-02-06', '%Y-%m-%d')):
                 # Define the inpath for the basic files
                 in_path_basic = ann_fld_path + '/' + daily_files_basic[day]
-                if (year == 0) & (day == 0):
+                if (i == 0) & (day == 0):
                     # Set up the base dataset by reading in bond data using read_bond_info()
                     bond_info_df = read_bond_info(in_path_basic)
                 else:
@@ -123,11 +130,12 @@ def def_unique_bond_info(path):
                         [bond_info_df,
                          bond_info_df_tmp_basic.loc[bond_info_df_tmp_basic.CUSIP_ID.isin(add_CUSIPs_basic)]]
                     )
+
             # After 2012-02-06 there are also supplementary information for bonds
             else:
                 # Specify the input path for the normal bond info datasets
                 in_path_basic  = ann_fld_path + '/' +  daily_files_basic[day]
-                if year == 10: #Note year number needs to correspond to the year 2012
+                if year == 2012: #Note year number needs to correspond to the year 2012
                     # Specify separately for year 2012 as the first 22 trading days are subject to the
                     # pre-2012 reporting standards
                     in_path_supp  = ann_fld_path + '/' + daily_files_supp[day-23]
@@ -154,7 +162,7 @@ def def_unique_bond_info(path):
                      bond_info_df_tmp_supp.loc[bond_info_df_tmp_supp.CUSIP_ID.isin(add_CUSIPs_supp)]]
                 )
     # Store the dataset
-    bond_info_df.to_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/bond_info.pkl')
+    bond_info_df.to_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/bond_info.pkl')
 
     return bond_info_df
 

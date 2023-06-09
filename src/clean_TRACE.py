@@ -94,7 +94,8 @@ def post_2012_clean(df_post):
     temp_raw3_NEW = temp_raw3_NEW.drop(columns = ['drop', 'PREV_TRD_CNTRL_NB_temp_delII'])
 
     # Save reversals referring to trades before Feb 6th, 2012
-    unmatched = temp_deleteII_NEW.loc[temp_deleteII_NEW.TRD_EXCTN_DT < pd.to_datetime('2012-02-06')]
+    temp_deleteII_NEW['TRD_EXCTN_DT'] = pd.to_datetime(temp_deleteII_NEW['TRD_EXCTN_DT'])
+    unmatched = temp_deleteII_NEW.loc[temp_deleteII_NEW.TRD_EXCTN_DT < datetime(2012,2,6)]
 
     return temp_raw3_NEW, unmatched
 

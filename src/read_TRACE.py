@@ -226,7 +226,7 @@ def adj_dt_format_pre_2012(in_path):
     # This is excluded by the code below. 20810401 is the maximal number possible
     date_vars = ['TRD_EXCTN_DT', 'TRD_RPT_DT', 'TRD_STLMT_DT']
     for dv in date_vars:
-        df = df[(df[dv].astype(float) > 20200101) == False]
+        df = df[(df[dv].astype(float) > 20300101) == False]
 
     # Define the dictionary with the variables that are to be converted in the correct date format.
     date_dict = {
@@ -264,13 +264,14 @@ def adj_dt_format_post_2012(in_path):
     date_vars = ['TRD_EXCTN_DT', 'TRD_RPT_DT', 'TRD_STLMT_DT', 'SYSTM_CNTRL_DT', 
                  'PREV_TRD_CNTRL_DT', 'FIRST_TRD_CNTRL_DT']
     for dv in date_vars:
-        df = df[(df[dv].astype(float) > 20200101) == False]
+        df = df[(df[dv].astype(float) > 20300101) == False]
 
     # Define the dictionary with the variables that are to be converted in the correct date format.
     date_dict = {
         'execution_date': ['TRD_EXCTN_TM', 'TRD_EXCTN_DT'],
         'reporting_date': ['TRD_RPT_TM', 'TRD_RPT_DT']
     }
+
     # Loop over both the reporting and execution date using format_ex_tm_dt()
     for v in ['execution_date', 'reporting_date']:
         df = format_ex_tm_dt(df, date_dict['{}'.format(v)])
@@ -354,23 +355,30 @@ def read_post_2012(year_ind, counter, annual_fld, path):
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
     )
 
+    df_dict_post_2012 = {}
+
     # Initialize trsct count
     # Loop over all days in one yearly folder and concatenate the dataset
-    for day in range(0, len(daily_files)):
-    #for day in range(0, 1):
+    #for day in range(0, len(daily_files)):
+    for day in range(0, 3):
         print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
         if day == 0:
             # Read in the new daily dataset.
             df = adj_dt_format_post_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
-            df = df.loc[df['CUSIP_ID'].isin(cusip_list_keep)]
+            df_dict_post_2012['df_day_{}'.format(day)] = df.loc[df['CUSIP_ID'].isin(cusip_list_keep)]
         else:
             # Read in the new daily dataset.
             df_tmp = adj_dt_format_post_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
-            df_tmp = df_tmp.loc[df_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+            df_dict_post_2012['df_day_{}'.format(day)] = df_tmp.loc[df_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+
+            #print("Start concatenation")
             # Concatenate the datasets
-            df = pd.concat([df, df_tmp])
+            #df = pd.concat([df, df_tmp])
+            #print("End concatenation")
+
+    df = pd.concat(df_dict_post_2012.values(), ignore_index=True)
 
     # Implement the Dick-Nielsen (2019) corrections using post_2012_clean()
     df_post, unmatched = post_2012_clean(df)
@@ -420,9 +428,9 @@ def read_2012(year_ind, counter, annual_fld, path, unmatched_in):
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
     )
     # Loop over all days in one yearly folder and concatenate the dataset
-    for day in range(0, len(daily_files)):
-    #for day in range(0, 1):
-        print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind + 1, day))
+    #for day in range(0, len(daily_files)):
+    for day in range(0, 25):
+        print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
         if (day == 0):
             # Read in the new daily dataset for the first day of 2012
             df_2012_prior = adj_dt_format_pre_2012(ann_fld_path + '/' + daily_files[day])
@@ -500,31 +508,36 @@ def read_pre_2012(year_ind, counter, annual_fld, path, unmatched_in):
         [f for f in sorted(os.listdir(ann_fld_path))
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
     )
+
+    df_dict_pre_2012 = {}
+
     # Loop over all days in one yearly folder and concatenate the dataset
     #for day in range(0, len(daily_files)):
-    for day in range(0, 1):
+    for day in range(0, 3):
         if year_ind >= 10:
-            print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind +1, day))
+            print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
         else:
-            print('Currently reading Year: 200{}, Trading Day: {}'.format(year_ind +1, day))
+            print('Currently reading Year: 200{}, Trading Day: {}'.format(year_ind, day))
         if (day == 0):
             # Read in the new daily dataset.
             df = adj_dt_format_pre_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
-            df = df.loc[df['CUSIP_ID'].isin(cusip_list_keep)]
+            df_dict_pre_2012['df_day_{}'.format(day)] = df.loc[df['CUSIP_ID'].isin(cusip_list_keep)]
         else:
             # Read in the new daily dataset.
             df_tmp = adj_dt_format_pre_2012(ann_fld_path + '/' + daily_files[day])
             # Keep only the bonds according to the specifications in select_bonds()
-            df_tmp = df_tmp.loc[df_tmp['CUSIP_ID'].isin(cusip_list_keep)]
+            df_dict_pre_2012['df_day_{}'.format(day)] = df_tmp.loc[df_tmp['CUSIP_ID'].isin(cusip_list_keep)]
             # Concatenate the datasets
-            df = pd.concat([df, df_tmp])
+            #df = pd.concat([df, df_tmp])
+
+    df = pd.concat(df_dict_pre_2012.values(), ignore_index=True)
 
     # Implement the Dick-Nielsen (2019) corrections using post_2012_clean()
     df_prior = prior_2012_clean(df, unmatched_in)
     # Store the yearly TRACE data
     df_prior.to_pickle(
-        path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year_ind  + 2000)
+        path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year_ind  + 2000)
     )
     # Drop DataFrame from memory to save memory space
     del [df_prior]
@@ -558,22 +571,27 @@ def read_TRACE_all(path, dataset_specs_in):
 
     # Apply the reading-in procedure in the respective years. Loop backwards to assure that the 
     # unmatched data of the post period are available for the pre-period.
-    for year_ind in range(int(str(dataset_specs_in['sample_time_span'][1])[-2:]), 0, -1):
-        print(year_ind)
+    for year_ind in range(int(str(dataset_specs_in['sample_time_span'][1])[-2:]), int(str(dataset_specs_in['sample_time_span'][0])[-2:])-1, -1):
+        print("")
+        print("START REATING IN YEAR {}".format(2000 + year_ind))
+        print("")
+
+        # Initialization with starting year:
         if year_ind == int(str(dataset_specs_in['sample_time_span'][1])[-2:]):
             unmatched = read_post_2012(year_ind, counter, annual_fld_names, path)
-        # Note: 11 corresponds to 2012 which is the cutoff year due to the change in the TRACE 
+
+        # Note: 12 corresponds to 2012 which is the cutoff year due to the change in the TRACE 
         # dataset format
         elif (year_ind < int(str(dataset_specs_in['sample_time_span'][1])[-2:])) & (year_ind > 12):
             unmatched_tmp = read_post_2012(year_ind, counter, annual_fld_names, path)
             unmatched = pd.concat([unmatched, unmatched_tmp])
-            print("before 2012")
+
         elif year_ind == 12:  # corresponds to 2012 (!!mind the reverse counting!!)
-            print("in 2012")
             unmatched_tmp = read_2012(year_ind, counter, annual_fld_names, path, unmatched)
             unmatched_fin = pd.concat([unmatched, unmatched_tmp])
+
         else:
-            read_pre_2012(counter, annual_fld_names, path, unmatched_fin)
+            read_pre_2012(year_ind, counter, annual_fld_names, path, unmatched_fin)
 
         # Subtract one from the automatic counter that works as a selector variable
         counter = counter-1
@@ -703,8 +721,8 @@ def get_all_rpt_dates(path):
     )
     # Initialize list
     TRACE_rpt_days_all = []
-    for year in range(0, len(annual_fld_names)):
-        ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[year]
+    for i in range(0, len(annual_fld_names)):
+        ann_fld_path = path + '/src/original_data/academic_TRACE/TRACE_raw/' + annual_fld_names[i]
         # Get a list of the daily files within the annual folder. Note that the actual transaction
         #  data filename does NOT start with '0033-corp-bond' whereas the supplementary files do. 
         # Thus only transaction data is selected.
@@ -715,7 +733,7 @@ def get_all_rpt_dates(path):
         TRACE_rpt_days_yearly = [c[30:40] for c in daily_files]
         TRACE_rpt_days_all = TRACE_rpt_days_all + TRACE_rpt_days_yearly
 
-    with open(path + 'bld/data/TRACE/TRACE_info/TRACE_rpt_dates.pkl', 'wb') as f:
+    with open(path + '/bld/data/TRACE/TRACE_info/TRACE_rpt_dates.pkl', 'wb') as f:
         pickle.dump(TRACE_rpt_days_all, f)
 
 

@@ -20,7 +20,7 @@ from read_TRACE import read_TRACE_all
 # transaction data
 from concatenate_merge_TRACE_MERGENT import conct_merge_data
 # Import function to read in the bond background information
-from read_bond_background_TRACE import def_unique_bond_info
+from read_bond_background_TRACE import get_unique_bond_info
 # Import the inter-dealer transaction and agency trade filter according to 
 # Dick-Nielsen & Poulsen (2019)
 from clean_TRACE import del_interd_transact
@@ -62,7 +62,7 @@ construct_nec_folders(project_path)
 # Model specifications
 dataset_specs = {
     # Specify the sample time span of the dataset
-    'sample_time_span': [2002, 2018],
+    'sample_time_span': [2007, 2018],
     # Specify the variables to keep from the ratings data
     'ratings': {
         'varlist': ['complete_cusip', 'rating_date', 'rating']
@@ -121,15 +121,45 @@ print("START TO READ AND CLEAN THE ACADEMIC TRACE DATA FOR THE TIME RANGE: {} to
     # 1.3) Read in the list of all reported dates in TRACE
 ######
 
-# 1.1) Read in the daily transaction data
+# 1.1) Read in the daily raw transaction data
 if ((os.path.isfile(path_TRACE_raw_clean_first)) & (os.path.isfile(path_TRACE_raw_clean_last))):
     print("")
     print("STEP 1.1: Raw Trace data is already read, cleaned and saved. Proceed with next step")
 elif not os.path.isfile(path_TRACE_raw_clean_first):
+    #print("")
+    #print("STEP 1.1: Start reading and concatenating the raw TRACE data")
+    #read_TRACE_all(project_path, dataset_specs)
+    #print("STEP 1.1: Finished reading and concatenating the raw TRACE data")
+    #print("")
+    print("STEP 1.2: Start reading in the bond background characteristics")
+    get_unique_bond_info(project_path, dataset_specs)
+    print("STEP 1.2: Finished reading in the bond background characteristics")
     print("")
-    print("STEP 1.1: Start reading and and concatenating the raw TRACE data")
-    read_TRACE_all(project_path, dataset_specs)
-    print("STEP 1.1: Finished reading and and concatenating the raw TRACE data")
+    print("STEP 1.3: Start reading in the list of all reported dates in TRACE")
+    get_all_rpt_dates(project_path)
+    print("STEP 1.3: Finished reading in the list of all reported dates in TRACE")
+
+######
+# 2) Implement the remaining cleaning steps:
+# 2.0) Read in the concatenated dataset
+       # Alternative 1: Use the own reading-in code to read in and perform the (replicated) cleaning steps by Dick
+       # Alternative 2: Use the SAS code by Dick-Nielsen & Poulsen to read in and perform the cleaning steps
+# 2.1) Clean the agency trades and delete one side of the inter-dealer trades
+# 2.2) Implement the cleaning steps as in Bessembinder et al. (2018)
+# 2.3) Implement some further general data cleaning steps
+######
+
+# 2.0) Read in the concatenated data from step 1)
+df_merged = conct_merge_data(project_path, dataset_specs)
+
+
+# Define a selection variable based on which the inter-dealer transactions are deleted.
+# df_merged['I_drop'] = np.arange(0, len(df_merged))
+# Select only the necessary variables
+# df_merged_red = df_merged[['CUSIP_ID', 'TRD_EXCTN_DT', 'TRD_EXCTN_TM', 'ENTRD_VOL_QT', 'RPTD_PR', 'RPTG_PARTY_ID',
+#                           'CNTRA_PARTY_ID', 'RPT_SIDE_CD', 'I_drop']].copy()
+
+
 
 
 
