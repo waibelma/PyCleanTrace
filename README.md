@@ -4,6 +4,8 @@ Python Code to Clean Academic TRACE data following the procedure outlined in [Di
 
 The original cleaning code by Dick-Nielsen & Poulsen (2019) is written in SAS. **Clean_Academic_TRACE** is meant to provide an open-source alternative to facilitate the data management when working with Academic TRACE in Python.
 
+Note: This version is fully functional and tested on an OS system. In a next step Windows comatibility will be assured and further tests will be implemented. A parallelisation step is already integrated but not yet applied. Any feedback is welcome.
+
 -------------
 
 Instructions for  running **Clean_Academic_TRACE**:
