@@ -104,8 +104,7 @@ def get_unique_bond_info(path, dataset_specs_in):
                      f.startswith('.'))]
         )
         # Loop over all sample days in the respective year
-        #for day in range(0, len(daily_files_basic)):
-        for day in range(0, 3):
+        for day in range(0, len(daily_files_basic)):
             print('Currently reading Year: {}, Trading Day: {}'.format(year, day))
 
             # Note that there were no supplementary files prior to the reform in 2012-02-06. Thus, this needs

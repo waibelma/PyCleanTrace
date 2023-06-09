@@ -33,7 +33,7 @@ def post_2012_clean(df_post):
     temp_raw3_NEW:  Data cleaned by reports that are matched by the reversals
     unmatched: Reversals referring to trades before Feb 6th, 2012
     """
-
+    
     # Step 1.1: (Dick Nielsen and Thomas Poulsen (2019), p.13)
     # Report the party executing the trade in the RPTG_PARTY_ID field
     df_post.loc[df_post.RPTG_PARTY_GVP_ID.isna()==False, 'RPTG_PARTY_ID'] = (
@@ -50,6 +50,7 @@ def post_2012_clean(df_post):
     temp_deleteII_NEW_cols =(['CUSIP_ID', 'ENTRD_VOL_QT', 'RPTD_PR', 'TRD_EXCTN_DT', 'TRD_EXCTN_TM','RPT_SIDE_CD',
                               'CNTRA_PARTY_ID', 'CNTRA_PARTY_GVP_ID', 'PREV_TRD_CNTRL_NB', 'TRD_RPT_DT', 'TRD_RPT_TM']
     )
+     
     # Delete the observations without a CUSIP ID
     temp_raw = df_post[df_post.CUSIP_ID.isna() == False]
     # Takes out all cancellations and corrections. These transactions should be deleted together
@@ -60,7 +61,6 @@ def post_2012_clean(df_post):
     temp_deleteII_NEW = temp_raw.loc[temp_raw.TRD_ST_CD.isin(['Y']), temp_deleteII_NEW_cols]
     # The rest of the data;
     temp_raw = temp_raw.loc[(temp_raw.TRD_ST_CD != 'X') & (temp_raw.TRD_ST_CD != 'C') & (temp_raw.TRD_ST_CD != 'Y')]
-
 
     # Step 1.2: (Dick Nielsen and Thomas Poulsen (2019), p.13-14)
     # Deletes the cancellations and corrections as identified by the reports in temp_deleteI_NEW.
@@ -78,7 +78,7 @@ def post_2012_clean(df_post):
     temp_raw2 = temp_raw2.loc[temp_raw2["drop"] != 1]
     # Drop unnecessary variable
     temp_raw2 = temp_raw2.drop(columns=['drop'])
-
+     
     # Step 1.3: (Dick Nielsen and Thomas Poulsen (2019), p.14)
     # Deletes the reports that are matched by the reversals;
     merge_vars_raw2 = ['CUSIP_ID', 'ENTRD_VOL_QT', 'RPTD_PR', 'TRD_EXCTN_DT', 'TRD_EXCTN_TM',
@@ -86,6 +86,7 @@ def post_2012_clean(df_post):
     merge_vars_raw_delII = ['CUSIP_ID', 'ENTRD_VOL_QT', 'RPTD_PR', 'TRD_EXCTN_DT', 'TRD_EXCTN_TM',
                            'RPT_SIDE_CD', 'CNTRA_PARTY_ID', 'CNTRA_PARTY_GVP_ID', 'PREV_TRD_CNTRL_NB']
     temp_deleteII_NEW['drop'] = 1
+    
     # Generate the merged temp file. This is the equivalent of the SQL command on page 14 (lower part)
     temp_raw3_NEW = temp_raw2.merge(temp_deleteII_NEW[merge_vars_raw_delII + ['drop']], left_on = merge_vars_raw2,
                                         right_on = merge_vars_raw_delII, how = 'left', suffixes=('', '_temp_delII'))

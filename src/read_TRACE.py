@@ -359,8 +359,7 @@ def read_post_2012(year_ind, counter, annual_fld, path):
 
     # Initialize trsct count
     # Loop over all days in one yearly folder and concatenate the dataset
-    #for day in range(0, len(daily_files)):
-    for day in range(0, 3):
+    for day in range(0, len(daily_files)):
         print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
         if day == 0:
             # Read in the new daily dataset.
@@ -383,6 +382,7 @@ def read_post_2012(year_ind, counter, annual_fld, path):
     # Implement the Dick-Nielsen (2019) corrections using post_2012_clean()
     df_post, unmatched = post_2012_clean(df)
     # Store the yearly TRACE data to disc:
+    print("Saving the concatenated raw data for the year {}".format(year_ind + 2000))
     df_post.to_pickle(
         path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year_ind + 2000)
     )
@@ -428,8 +428,7 @@ def read_2012(year_ind, counter, annual_fld, path, unmatched_in):
          if not (f.startswith('0033-corp-bond') | f.startswith('.'))]
     )
     # Loop over all days in one yearly folder and concatenate the dataset
-    #for day in range(0, len(daily_files)):
-    for day in range(0, 25):
+    for day in range(0, len(daily_files)):
         print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
         if (day == 0):
             # Read in the new daily dataset for the first day of 2012
@@ -467,8 +466,10 @@ def read_2012(year_ind, counter, annual_fld, path, unmatched_in):
     # Apply the cleaning steps by Dick-Nielsen & Poulsen (2019) for the pre 2012 data:
     df_2012_pre_cl_DN = prior_2012_clean(df_2012_prior, unmatched)
     # Store the yearly TRACE data
+    print("Saving the concatenated raw data for the year 2012 (post change in reporting)")
     df_2012_post_cl_DN.to_pickle(
         path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}_post.pkl'.format(year_ind  + 2000))
+    print("Saving the concatenated raw data for the year 2012 (pre change in reporting)")
     df_2012_pre_cl_DN.to_pickle(
         path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}_prior.pkl'.format(year_ind  + 2000))
 
@@ -512,8 +513,7 @@ def read_pre_2012(year_ind, counter, annual_fld, path, unmatched_in):
     df_dict_pre_2012 = {}
 
     # Loop over all days in one yearly folder and concatenate the dataset
-    #for day in range(0, len(daily_files)):
-    for day in range(0, 3):
+    for day in range(0, len(daily_files)):
         if year_ind >= 10:
             print('Currently reading Year: 20{}, Trading Day: {}'.format(year_ind, day))
         else:
@@ -536,6 +536,7 @@ def read_pre_2012(year_ind, counter, annual_fld, path, unmatched_in):
     # Implement the Dick-Nielsen (2019) corrections using post_2012_clean()
     df_prior = prior_2012_clean(df, unmatched_in)
     # Store the yearly TRACE data
+    print("Saving the concatenated raw data for the year {}".format(year_ind + 2000))
     df_prior.to_pickle(
         path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year_ind  + 2000)
     )
