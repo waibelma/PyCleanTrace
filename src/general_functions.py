@@ -47,6 +47,7 @@ def construct_nec_folders(project_path):
     path_output_clean_data_2 = project_path + '/bld/data/TRACE/'
     path_output_clean_data_3 = project_path + '/bld/data/TRACE/TRACE_raw_clean'
     path_output_clean_data_4 = project_path + '/bld/data/TRACE/TRACE_info'
+    path_output_clean_data_5 = project_path + '/bld/data/TRACE/TRACE_final_clean'
 
 
     # Construct the relevant folders if they are not already exisiting
@@ -58,6 +59,7 @@ def construct_nec_folders(project_path):
     build_folders(path_output_clean_data_2)
     build_folders(path_output_clean_data_3)
     build_folders(path_output_clean_data_4)
+    build_folders(path_output_clean_data_5)
 
     dir = os.listdir(path_input_raw_data_2)
   

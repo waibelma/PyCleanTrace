@@ -62,7 +62,6 @@ def rd_cl_ratings(path, rating_varlist):
         # D
         'DDD': 22, 'DD': 23, 'D': 24, 'NR': 25
     }
-
     df_ratings.loc[:,'rating_numeric'] = df_ratings['rating'].copy()
 
     df_ratings = df_ratings.replace({'rating_numeric': remap_ratings_integer_dict})
@@ -76,29 +75,34 @@ def rd_cl_ratings(path, rating_varlist):
     # Make sure that if there are more than one ratings on a given date, only keep the lowest one
     # For each CUSIP and each rating date, compute the maximum rating -> Exclude all ratings that are lower than the maximum rating
     # This will exclude all the ratings
-    df_ratings['min_rating_cusip_date'] = df_ratings.groupby(['rating_date', 'complete_cusip'])[
-        'rating_numeric'].transform(
-        'min')
+    df_ratings['min_rating_cusip_date'] = df_ratings.groupby(['rating_date', 'complete_cusip'])['rating_numeric'].transform('min')
     # Generate an indicator if there are more than one rating available at a
-    df_ratings['D_more_one_rating'] = df_ratings.groupby(['rating_date', 'complete_cusip'])['rating_numeric'].transform(
-        lambda x: len(x) > 1) * 1
-
+    df_ratings['D_more_one_rating_tmp'] = (
+        df_ratings.groupby(['rating_date', 'complete_cusip'])['rating_numeric'].transform('count')
+    )
+    df_ratings['D_more_one_rating'] = (df_ratings.D_more_one_rating_tmp > 1) * 1
+    df_ratings = df_ratings.drop(columns=['D_more_one_rating_tmp'])
+    # df_ratings['D_more_one_rating'] = (
+    #     df_ratings.groupby(['rating_date', 'complete_cusip'])['rating_numeric'].transform(
+    #     lambda x: len(x) > 1) * 1
+    # )
+     
     # Bond-dates where there is no conflicting rating
     df_ratings_single_rating = df_ratings.loc[df_ratings.D_more_one_rating == 0]
-
+     
     # Bond-dates where there is more than one rating
     df_ratings_more_one_rating = df_ratings.loc[df_ratings.D_more_one_rating == 1]
     # Set the rating equal to the minimum rating
     df_ratings_more_one_rating.loc[:, 'rating_numeric'] = df_ratings_more_one_rating.loc[:, 'min_rating_cusip_date'].copy()
     # Drop the duplicates per bond-date, i.e. keep only the minimum rating
     df_ratings_more_one_rating = df_ratings_more_one_rating.drop_duplicates(subset=['rating_date', 'complete_cusip'])
-
+     
     # Concatenate the files to one rating dataset
     df_ratings = pd.concat([df_ratings_single_rating, df_ratings_more_one_rating])
-
+     
     # Only maintain the relevant variables
     df_ratings = df_ratings[rating_varlist + ['rating_numeric']]
-
+     
     # Rename the variables to common routine to have common merge names
     df_ratings = df_ratings.rename(columns={'complete_cusip': 'CUSIP_ID'})
 
@@ -136,7 +140,7 @@ def rd_cl_ratings(path, rating_varlist):
 #    return df_ratings
 
 
-def merge_transact_rating(path, df_transact, dict_spec):
+def merge_transact_rating(path, df_transact, dict_spec, df_rating):
     """
     Merge the transaction data (TRACE) and the ratings data (MERGENT FISD). Importantly, some ratings are issued on a
     date when the bond is not traded. In case a rating date can not directly be merged to a transaction date, I assign
@@ -156,7 +160,7 @@ def merge_transact_rating(path, df_transact, dict_spec):
     """
 
     # Read-in the ratings data
-    df_rating = rd_cl_ratings(path, dict_spec['ratings']['varlist'])
+    #df_rating = rd_cl_ratings(path, dict_spec['ratings']['varlist'])
 
     # Add a common date identifier and sort values (transaction data)
     # Note: merge_asof requires no missing values in the merge variable
@@ -213,21 +217,24 @@ def conct_merge_data(path, dict_spec):
 
     # Read in the ratings dataset
     df_ratings = rd_cl_ratings(path, dict_spec['ratings']['varlist'])
+    
     # Read in the issue data
-    df_issue = pd.read_pickle(path + 'src/original_data/Mergent_FISD/issue_data.pkl')
+    df_issue = pd.read_pickle(path + '/src/original_data/Mergent_FISD/issue_data.pkl')
+
     # Read in the bond info data
-    df_bond_info = pd.read_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/bond_info.pkl')
+    df_bond_info = pd.read_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/bond_info.pkl')
+
     # Subtract 1 year from the beginning year to account for Python 0 counting (i.e. actually include that year)
     for year in range(dict_spec['sample_time_span'][1], dict_spec['sample_time_span'][0]-1, -1):
         print('Dataset concatenated until:{}'.format(year))
         # last year of the sample
         if (year == dict_spec['sample_time_span'][1])&(year>2012):
             df_concat = (harmon_pre_post_data(
-                pd.read_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year)), pre_post_id='POST')
+                pd.read_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year)), pre_post_id='POST')
             [dict_spec['transactions']['varlist']]
             )
             # Merge the rating information
-            df_concat = merge_transact_rating(path, df_concat, dict_spec)
+            df_concat = merge_transact_rating(path, df_concat, dict_spec, df_ratings)
             # Merge the issue information
             df_concat = df_concat.merge(df_issue[dict_spec['issue_data']['varlist']], on='CUSIP_ID', how='left')
             # Merge with the bond info data
@@ -239,11 +246,11 @@ def conct_merge_data(path, dict_spec):
                 merge_transact_rating(path,
                 # Read-in the transaction data of the new year
                 harmon_pre_post_data(
-                    pd.read_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year)),
+                    pd.read_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year)),
                     pre_post_id='POST'
                 )[dict_spec['transactions']['varlist']],
                 # Merge the new data with the ratinf data
-                dict_spec
+                dict_spec, df_ratings
                 )
             )
             # Merge the issue information
@@ -261,11 +268,11 @@ def conct_merge_data(path, dict_spec):
                 merge_transact_rating(path,
                     # Read-in the transaction data of the new year
                     harmon_pre_post_data(
-                        pd.read_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_2012_post'),
+                        pd.read_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_2012_post.pkl'),
                         pre_post_id='POST'
                     )[dict_spec['transactions']['varlist']],
                     # Merge the new data with the ratinf data
-                    dict_spec
+                    dict_spec, df_ratings
                 )
             )
             # Merge the issue information
@@ -280,11 +287,11 @@ def conct_merge_data(path, dict_spec):
                 merge_transact_rating(path,
                     # Read-in the transaction data of the new year
                     harmon_pre_post_data(
-                        pd.read_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_2012_prior'),
+                        pd.read_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_2012_prior.pkl'),
                         pre_post_id='PRE'
                     )[dict_spec['transactions']['varlist']],
                     # Merge the new data with the ratinf data
-                    dict_spec
+                    dict_spec, df_ratings
                 )
             )
             # Merge the issue information
@@ -300,11 +307,11 @@ def conct_merge_data(path, dict_spec):
                 merge_transact_rating(path,
                     # Read-in the transaction data of the new year
                     harmon_pre_post_data(
-                        pd.read_pickle(path + 'bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}'.format(year)),
+                        pd.read_pickle(path + '/bld/data/TRACE/TRACE_raw_clean/TRACE_clean_{}.pkl'.format(year)),
                         pre_post_id='PRE'
                     )[dict_spec['transactions']['varlist']],
                     # Merge the new data with the ratinf data
-                    dict_spec
+                    dict_spec, df_ratings
                 )
             )
             # Merge the issue information

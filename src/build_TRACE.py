@@ -126,11 +126,11 @@ if ((os.path.isfile(path_TRACE_raw_clean_first)) & (os.path.isfile(path_TRACE_ra
     print("")
     print("STEP 1.1: Raw Trace data is already read, cleaned and saved. Proceed with next step")
 elif not os.path.isfile(path_TRACE_raw_clean_first):
-    #print("")
-    #print("STEP 1.1: Start reading and concatenating the raw TRACE data")
-    #read_TRACE_all(project_path, dataset_specs)
-    #print("STEP 1.1: Finished reading and concatenating the raw TRACE data")
-    #print("")
+    print("")
+    print("STEP 1.1: Start reading and concatenating the raw TRACE data")
+    read_TRACE_all(project_path, dataset_specs)
+    print("STEP 1.1: Finished reading and concatenating the raw TRACE data")
+    print("")
     print("STEP 1.2: Start reading in the bond background characteristics")
     get_unique_bond_info(project_path, dataset_specs)
     print("STEP 1.2: Finished reading in the bond background characteristics")
@@ -139,27 +139,74 @@ elif not os.path.isfile(path_TRACE_raw_clean_first):
     get_all_rpt_dates(project_path)
     print("STEP 1.3: Finished reading in the list of all reported dates in TRACE")
 
-######
-# 2) Implement the remaining cleaning steps:
-# 2.0) Read in the concatenated dataset
-       # Alternative 1: Use the own reading-in code to read in and perform the (replicated) cleaning steps by Dick
-       # Alternative 2: Use the SAS code by Dick-Nielsen & Poulsen to read in and perform the cleaning steps
-# 2.1) Clean the agency trades and delete one side of the inter-dealer trades
-# 2.2) Implement the cleaning steps as in Bessembinder et al. (2018)
-# 2.3) Implement some further general data cleaning steps
-######
+    ######
+    # 2) Implement the remaining cleaning steps:
+    # 2.0) Read in the concatenated dataset
+    # 2.1) Clean the agency trades and delete one side of the inter-dealer trades
+    # 2.2) Implement the cleaning steps as in Bessembinder et al. (2018)
+    # 2.3) Implement some further general data cleaning steps
+    ######
 
-# 2.0) Read in the concatenated data from step 1)
-df_merged = conct_merge_data(project_path, dataset_specs)
-
-
-# Define a selection variable based on which the inter-dealer transactions are deleted.
-# df_merged['I_drop'] = np.arange(0, len(df_merged))
-# Select only the necessary variables
-# df_merged_red = df_merged[['CUSIP_ID', 'TRD_EXCTN_DT', 'TRD_EXCTN_TM', 'ENTRD_VOL_QT', 'RPTD_PR', 'RPTG_PARTY_ID',
-#                           'CNTRA_PARTY_ID', 'RPT_SIDE_CD', 'I_drop']].copy()
+    # 2.0) Read in the concatenated data from step 1)
+    df_merged = conct_merge_data(project_path, dataset_specs)
+    # Define a selection variable based on which the inter-dealer transactions are deleted.
+    df_merged['I_drop'] = np.arange(0, len(df_merged))
+    # Select only the necessary variables
+    df_merged_red = df_merged[['CUSIP_ID', 'TRD_EXCTN_DT', 'TRD_EXCTN_TM', 'ENTRD_VOL_QT', 'RPTD_PR', 'RPTG_PARTY_ID',
+                               'CNTRA_PARTY_ID', 'RPT_SIDE_CD', 'I_drop']].copy()
 
 
+    # 2.1) Clean the agency trades and delete one side of the inter-dealer trades
+    # NOTE: This applies the cleaning step proposed in Dick-Nielsen & Poulsen (2019) for the agency trades and the
+    # inter-dealer trades. However, this step is not necessary and has to be explicitly motivated.
+    # Motivation: I decide to exclude:
+    # a) Double-counted inter-dealer trades. If we leave them in, every D-D trade has two entries, one from the buying and
+    # one from the selling dealer. However, there is only one trade. By cancelling one of these two reports no information
+    # is lost and there is no risk of double-counting
+    # b) Agency trades without commission: If we leave them in we would
+    # essentially see some  agency trades that seem to be very cheap. However, Dick-Nielsen (2014) points out that there
+    # are some unreported costs (e.g. fees) in the background. -> Currently agency trades are NOT excluded
+    list_keep = del_interd_transact(df_merged_red)
+    df_merged_cleaned_1 = df_merged.loc[df_merged['I_drop'].isin(list_keep)]
+    del [df_merged, df_merged_red]
+    gc.collect()
+    df_merged_cleaned_1 = df_merged_cleaned_1[df_merged_cleaned_1.columns.drop(['I_drop'])]
 
+
+    # 2.2) Implement the cleaning steps as in Bessembinder et al. (2018) and Anand et al. (2021)
+    df_merged_cleaned_2 = clean_trade_level(df_merged_cleaned_1)
+    del [df_merged_cleaned_1]
+    gc.collect()
+
+    # 2.3) Implement the general data cleaning steps
+    df_merged_cleaned_3 = clean_df_general(df_merged_cleaned_2, dataset_specs)
+    del [df_merged_cleaned_2]
+    gc.collect()
+
+    # 2.4) Implement the cleaning steps for TRACE holidays and non-week days
+    df_merged_cleaned_4 = add_clean_trading_dates(df_merged_cleaned_3, project_path)
+    del [df_merged_cleaned_3]
+    gc.collect()
+
+
+    # 3.1) Add additional necessary variables
+    df_merged_cleaned_5_1 = create_necessary_vars(df_merged_cleaned_4)
+    del [df_merged_cleaned_4]
+
+    # 3.2) Add the necessary event time variables
+    df_merged_cleaned_5_2 = define_event_time_week(df_merged_cleaned_5_1)
+    del [df_merged_cleaned_5_1]
+    gc.collect()
+
+    ######
+    # 4) Save the final concatenated and cleaned dataset in pickle format
+    ######
+    print('Saving the DataFrame has started')
+    df_merged_cleaned_5_2.to_pickle(project_path + '/bld/data/TRACE/TRACE_final_clean/TRACE_final.pkl')
+
+
+    # Stop the time
+    t1 = time.time()
+    print("ALL FINISHED! The total data generation part took {}".format(t1-t0))
 
 

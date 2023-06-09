@@ -379,6 +379,8 @@ def clean_trade_level(df_in):
     ## c) Exclude trades that are reported after the bond's amount outstanding is reported by FISD as zero
     # Exclude all trades where the outstanding amount is reported to be zero but there is a reporting date for
     # the trade after the effective date when the outstanding amount is already reported to be zero
+    df_clean['TRD_RPT_DT'] = pd.to_datetime(df_clean['TRD_RPT_DT'])
+    df_clean['effective_date'] = pd.to_datetime(df_clean['effective_date'])
     df_clean = df_clean[((df_clean['TRD_RPT_DT'] > df_clean['effective_date']) & (df_clean.amount_outstanding == 0)) == False]
     print('Excluding trades  that are reported after the bonds amount outstanding is reported by FISD as zero deletes {} transactions'.
           format(N_trnsct - len(df_clean)))

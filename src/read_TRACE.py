@@ -570,10 +570,10 @@ def read_TRACE_all(path, dataset_specs_in):
     counter = len(annual_fld_names)
 
     # Apply the reading-in procedure in the respective years. Loop backwards to assure that the 
-    # unmatched data of the post period are available for the pre-period.
+    # unmatched data of the poSst period are available for the pre-period.
     for year_ind in range(int(str(dataset_specs_in['sample_time_span'][1])[-2:]), int(str(dataset_specs_in['sample_time_span'][0])[-2:])-1, -1):
         print("")
-        print("START REATING IN YEAR {}".format(2000 + year_ind))
+        print("START READING IN YEAR {}".format(2000 + year_ind))
         print("")
 
         # Initialization with starting year:
