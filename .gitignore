@@ -9,4 +9,5 @@ scripts/general/.env
 .vscode
 dask-worker-space/
 *.txt
+!requirements.txt #Except for foo.dll
 *.pkl
