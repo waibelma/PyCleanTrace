@@ -114,6 +114,9 @@ df_all_rpt_dates = (
 print("START TO READ AND CLEAN THE ACADEMIC TRACE DATA FOR THE TIME RANGE: {} to {}".
     format(dataset_specs['sample_time_span'][0], dataset_specs['sample_time_span'][1]))
 
+# 0.4) Load the required versions of the papers
+os.system('pip install -r  requirements.txt')
+
 ######
 # 1) Read in the daily transaction data as well as the data bond background information
     # 1.1) Read in daily raw data and save on yearly basis (leave commented out if already done)
