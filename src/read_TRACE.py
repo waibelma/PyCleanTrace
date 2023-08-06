@@ -1,4 +1,5 @@
-"""Read in the daily raw Academic TRACE data and apply the corrections as described in Dick-Nielsen 
+"""
+Read in the daily raw Academic TRACE data and apply the corrections as described in Dick-Nielsen 
 & Poulsen (2019). The steps are as follows:
     Step 1:     Read in the raw datasets. Due to the TRACE reporting change on 06.02.2012 this step 
                 needs to be separate for the pre- and post 06.02.2012 period.
