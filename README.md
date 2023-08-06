@@ -37,8 +37,7 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 6) Re-run  **sudo python build_TRACE.py** in the **src** folder. The process will start automatically and read, concatenate, and clean the data. In a last step relevant microstructure variables will be generated. 
 
-   7.1) The code loops through the available years backwards in time (starting with the largest year) and reads the raw data, performs the cleaning steps
-        and concatenates the yearly datasets to one final cleaned and concatenated TRACE dataset.
+   7.1) The code loops through the available years backwards in time (starting with the last year) and reads the raw data, performs the cleaning steps and concatenates the yearly datasets to one final cleaned and concatenated TRACE dataset.
 
 
 Description of subfolders
