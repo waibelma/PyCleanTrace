@@ -8,10 +8,8 @@ Note: This version is fully functional and tested on OS systems. In a next step 
 
 If you use the code for a publication or project, please cite PyCleanTrace as follows:
 
-<div style="background-color: #FFD700; padding: 10px; border-left: 3px solid #FF4500;">
-This is a highlighted citation.
-</div>
 
+```
 @software{PyCleanTrace,
   author = {Maritn Waibel},
   title = {Cleaning Academic Trace in Python: PyCleanTrace},
@@ -19,7 +17,7 @@ This is a highlighted citation.
   version = {0.0.1},
   date = {2023-08-06},
 }
-
+```
 -------------
 
 Instructions for  running **Clean_Academic_TRACE**:
