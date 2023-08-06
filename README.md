@@ -31,7 +31,7 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 4) Place the raw TRACE data (in an unzipped folder on the annual level) in the folder  src/original_data/academic_TRACE/TRACE_raw
 
-   	4.1) Note: zip system data need to be removed as this will otherwise interrupt the code
+   	4.1) Note: zip system data need to be removed from the data folders as this will otherwise interrupt the code
 
 6) Place the Mergent FISD data in the folder **src/original_data/Mergent_FISD**. There has to be one dataset for bond issue information (named issue_data.pkl) and one dataset for the rating information (named ratings.pkl). For the structure and variable names of the dataset please refer to the sample datasets **illustration_issue_data.csv** and **illustration_ratings.csv**. These datasets can be found in the folder **src/original_data/Mergent_FISD/sample_data**
 
