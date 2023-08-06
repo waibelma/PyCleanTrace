@@ -1,18 +1,32 @@
 Python Code to Clean Academic TRACE data following the procedure outlined in [Dick-Nielsen & Poulsen (2019)](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3456082)
 -------------
-**Clean_Academic_TRACE** is an integrated Python code that facilitates the i) reading of the raw data from the text files, ii) the concatenation of the individual TRACE datasets, iii) the implementation of the cleaning and correction steps as in Dick-Nielsen & Poulsen (2019), and iv) The generation of relevant  microstructure variables and the implementation of additional cleaning steps standard in the literature (compare [Bessembinder (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12694))
+**Clean_Academic_TRACE** is an integrated Python code that facilitates the i) reading of the raw data from the text files, ii) the concatenation of the annual TRACE datasets, iii) the implementation of the cleaning and correction steps as in Dick-Nielsen & Poulsen (2019), and iv) The generation of relevant  microstructure variables and the implementation of additional cleaning steps standard in the literature (compare [Bessembinder (2019)](https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12694)).
 
 The original cleaning code by Dick-Nielsen & Poulsen (2019) is written in SAS. **Clean_Academic_TRACE** is meant to provide an open-source alternative to facilitate the data management when working with Academic TRACE in Python.
 
-Note: This version is fully functional and tested on an OS system. In a next step Windows comatibility will be assured and further tests will be implemented. A parallelisation step is already integrated but not yet applied. Any feedback is welcome.
+Note: This version is fully functional and tested on OS systems. In a next step Windows comatibility will be assured and further tests will be implemented. A parallelisation step is already integrated but not yet applied. This version is preliminary.  Any feedback is highly welcome.
+
+If you use the code for a publication or project, please cite PyCleanTrace as follows:
+
+<div style="background-color: #FFD700; padding: 10px; border-left: 3px solid #FF4500;">
+This is a highlighted citation.
+</div>
+
+@software{PyCleanTrace,
+  author = {Maritn Waibel},
+  title = {Cleaning Academic Trace in Python: PyCleanTrace},
+  url = {https://martinwaibel.com/project/example/trace_cleaning_python/},
+  version = {0.0.1},
+  date = {2023-08-06},
+}
 
 -------------
 
 Instructions for  running **Clean_Academic_TRACE**:
 
-1) Install git on your computer. [git download instructions](https://www.atlassian.com/git/tutorials/install-git)
+1) Install git on your computer. [git download instructions](https://www.atlassian.com/git/tutorials/install-git).
 
-2) Clone the repository to a local folder of your choice by using [this](https://github.com/waibelma/Clean-Academic-TRACE-data.git) link
+2) Clone the repository to a local folder of your choice by using [this](https://github.com/waibelma/Clean-Academic-TRACE-data.git) link.
 
 3) Navigate in the terminal into the **src** folder and initiate the data generation process via **sudo python build_TRACE.py**
 
