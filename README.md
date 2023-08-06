@@ -27,16 +27,15 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 3) Before placing the raw data: Navigate in the terminal into the **src** folder and initiate the data generation process via **sudo python build_TRACE.py**
 
-	3.1) Upon the first run, the relevant subfolder directories will be created and the code will stop with the message to place the raw data (TRACE and MERGENT) into the respective  **original_data** folder
+	3.1) Upon the first run, the relevant subfolder directories will be created and the code will stop with the instruction to place the raw data (TRACE and MERGENT) into the respective  **original_data** folder
 
-3) Place the raw TRACE data (unzipped on an annual level) in the folder  src/original_data/academic_TRACE/TRACE_raw
+3) Place the raw TRACE data (in an unzipped folder on the annual level) in the folder  src/original_data/academic_TRACE/TRACE_raw
 
-4) Place the Mergent FISD data in the folder src/original_data/Mergent_FISD. There has to be one dataset for bond issue information and one dataset for the rating information. For the structure of the dataset please refer to the sample datasets **illustration_issue_data.csv** and **illustration_ratings.csv**. These datasets can be found in the folder **src/original_data/Mergent_FISD/sample_data**
+4) Place the Mergent FISD data in the folder **src/original_data/Mergent_FISD**. There has to be one dataset for bond issue information (named issue_data.pkl) and one dataset for the rating information (named ratings.pkl). For the structure and variable names of the dataset please refer to the sample datasets **illustration_issue_data.csv** and **illustration_ratings.csv**. These datasets can be found in the folder **src/original_data/Mergent_FISD/sample_data**
 
-5) Adjust the start and end year of the final sample in the dictionary in **build_TRACE.py**. The start year is determined by the year of the first TRACE folder and the end year by the year of the last folder, respectively.
+5) Adjust the start and end year of the final sample in the dictionary in **build_TRACE.py** according to your preference. The start year is determined by the year of the first TRACE folder and the end year by the year of the last folder, respectively (do not place years in the original data folder that are not used)
 
 6) Re-run  **sudo python build_TRACE.py** in the **src** folder. The process will start automatically and read, concatenate, and clean the data. In a last step relevant microstructure variables will be generated. 
-
 
    6.1) The code loops through the available years backwards in time (starting with the largest year) and reads the raw data, performs the cleaning steps
         and concatenates the yearly datasets to one final cleaned and concatenated TRACE dataset.
