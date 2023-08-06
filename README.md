@@ -25,7 +25,7 @@ Instructions for  running **Clean_Academic_TRACE**:
 
 2) Clone the repository to a local folder of your choice by using [this](https://github.com/waibelma/Clean-Academic-TRACE-data.git) link.
 
-3) Navigate in the terminal into the **src** folder and initiate the data generation process via **sudo python build_TRACE.py**
+3) Before placing the raw data: Navigate in the terminal into the **src** folder and initiate the data generation process via **sudo python build_TRACE.py**
 
 	3.1) Upon the first run, the relevant subfolder directories will be created and the code will stop with the message to place the raw data (TRACE and MERGENT) into the respective  **original_data** folder
 
