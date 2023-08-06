@@ -191,7 +191,6 @@ elif not os.path.isfile(path_TRACE_raw_clean_first):
     del [df_merged_cleaned_3]
     gc.collect()
 
-
     # 3.1) Add additional necessary variables
     df_merged_cleaned_5_1 = create_necessary_vars(df_merged_cleaned_4)
     del [df_merged_cleaned_4]
